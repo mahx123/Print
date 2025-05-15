@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class StartApplication extends Application {
     private static final int PORT = 8080; // HTTP 服务端口
@@ -35,28 +36,34 @@ public class StartApplication extends Application {
             server.createContext("/api/print", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) throws IOException {
-                    // 处理 GET 请求
-                    if ("GET".equals(exchange.getRequestMethod())) {
-                        String response = "{\"message\": \"Hello from JavaFX HTTP Server!\"}";
-                        exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, response.length());
-                        OutputStream os = exchange.getResponseBody();
-                        os.write(response.getBytes());
-                        os.close();
-                    }
-                    // 处理 POST 请求
-                    else if ("POST".equals(exchange.getRequestMethod())) {
-                        // 读取请求体
-                        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-                        System.out.println("Received POST data: " + requestBody);
+                    URI requestUri = exchange.getRequestURI();
+                    String path = requestUri.getPath(); // 获取完整路径，如 "/api/data/search"
 
-                        // 返回响应
-                        String response = "{\"status\": \"success\", \"data\": \"" + requestBody + "\"}";
-                        exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, response.length());
-                        OutputStream os = exchange.getResponseBody();
+                    // 提取 `/api/data/` 后面的部分（如 "search"）
+                    String action = path.substring("/api/print/".length());
+
+                    String response="";
+                    switch (action) {
+                        case "search":
+                            response = "{\"error\": \"Unknown action: " + action + "\"}";
+                            break;
+                        case "update":
+                            response = "";
+                            break;
+                        default:
+                            response = "{\"error\": \"Unknown action: " + action + "\"}";
+                            exchange.sendResponseHeaders(404, response.length());
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes());
+                            }
+                            return;
+                    }
+
+                    // 返回 JSON 响应
+                    exchange.getResponseHeaders().add("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(200, response.length());
+                    try (OutputStream os = exchange.getResponseBody()) {
                         os.write(response.getBytes());
-                        os.close();
                     }
                 }
             });
