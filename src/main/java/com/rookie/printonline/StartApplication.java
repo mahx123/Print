@@ -32,7 +32,7 @@ public class StartApplication extends Application {
             HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
             // 注册 REST 接口 `/api/data`
-            server.createContext("/api/data", new HttpHandler() {
+            server.createContext("/api/print", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) throws IOException {
                     // 处理 GET 请求
