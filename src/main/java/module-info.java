@@ -5,4 +5,6 @@ module com.rookie.printonline {
 
     opens com.rookie.printonline to javafx.fxml;
     exports com.rookie.printonline;
+    requires jdk.httpserver;
+
 }
