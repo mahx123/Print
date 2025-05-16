@@ -5,6 +5,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import javafx.application.Application;
 import javafx.print.*;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,11 +15,21 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.image.BufferedImage;
@@ -61,6 +72,7 @@ public class Main {
                 Element line = (Element) lines.item(i);
                 processLineElement(line, labelPane);
             }
+            saveNodeAsImage(labelPane, "print_preview.png");
 //
 //            // 5. 打印
             printJavaFXNode(labelPane);
@@ -70,7 +82,32 @@ public class Main {
         }
     }
 
-    private static void processLayoutElement(Element layout, Pane parent)throws Exception {
+    private static void saveNodeAsImage(Node node, String filePath) {
+        // 1. 确保节点已正确渲染（可能需要临时添加到 Scene）
+        Scene scene = new Scene(new Group(node));
+
+        // 2. 创建 WritableImage 并捕获节点内容
+        WritableImage image = new WritableImage(
+                (int) node.getBoundsInParent().getWidth(),
+                (int) node.getBoundsInParent().getHeight()
+        );
+        node.snapshot(null, image);
+
+        // 3. 保存为 PNG 文件
+        File file = new File(filePath);
+        try {
+            ImageIO.write(
+                    SwingFXUtils.fromFXImage(image, null),
+                    "png",
+                    file
+            );
+            System.out.println("图片已保存到: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("保存图片失败: " + e.getMessage());
+        }
+    }
+
+    private static void processLayoutElement(Element layout, Pane parent) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
         double height = Double.parseDouble(layout.getAttribute("height"));
         double left = Double.parseDouble(layout.getAttribute("left"));
