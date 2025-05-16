@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -33,6 +34,7 @@ public class StartApplication extends Application {
         // 启动 HTTP Server（在后台线程运行）
         startHttpServer();
     }
+
     private void startHttpServer() {
         try {
             // 创建 HTTP Server，监听 8080 端口
@@ -47,7 +49,9 @@ public class StartApplication extends Application {
 
                     // 提取 `/api/data/` 后面的部分（如 "search"）
                     String action = path.substring("/api/print/".length());
+                    OutputStream os = null;
                     try {
+                        os = exchange.getResponseBody();
                         String response = "";
                         switch (action) {
                             case "search":
@@ -61,9 +65,7 @@ public class StartApplication extends Application {
                             default:
                                 response = "{\"error\": \"Unknown action: " + action + "\"}";
                                 exchange.sendResponseHeaders(404, response.length());
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes());
-                                }
+
                                 return;
                         }
 
@@ -71,12 +73,20 @@ public class StartApplication extends Application {
                         // 设置HTTP状态码和响应头
                         exchange.getResponseHeaders().set("Content-Type", "application/json");
                         exchange.sendResponseHeaders(200, response.getBytes().length);
-                        exchange.getResponseBody().write(response.getBytes());
-                    }catch (Exception e){
+                        os.write(response.getBytes());
+                    } catch (Exception e) {
+                        os = exchange.getResponseBody();
                         ApiResponse<?> error = ApiResponse.error(500, "Server Error");
                         String errorJson = JsonUtil.objectToJson(error);
                         exchange.sendResponseHeaders(500, errorJson.getBytes().length);
-                        exchange.getResponseBody().write(errorJson.getBytes());
+                        os.write(errorJson.getBytes());
+
+                    } finally {
+                        if (os != null) {
+                            os.flush();
+                            os.close();
+                        }
+
 
                     }
                 }
@@ -90,6 +100,7 @@ public class StartApplication extends Application {
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         launch();
     }
