@@ -3,6 +3,7 @@ package com.rookie.printonline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rookie.printonline.common.HttpUtils;
 import com.rookie.printonline.common.JsonUtil;
+import com.rookie.printonline.enums.HttpStatus;
 import com.rookie.printonline.exe.PrintServe;
 import com.rookie.printonline.result.ApiResponse;
 import javafx.application.Application;
@@ -19,6 +20,7 @@ import java.net.InetSocketAddress;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class StartApplication extends Application {
@@ -46,7 +48,7 @@ public class StartApplication extends Application {
                 public void handle(HttpExchange exchange) throws IOException {
                     URI requestUri = exchange.getRequestURI();
                     String path = requestUri.getPath(); // 获取完整路径，如 "/api/data/search"
-
+                    exchange.getResponseHeaders().set("Content-Type", "application/json;charset=UTF-8");
                     // 提取 `/api/data/` 后面的部分（如 "search"）
                     String action = path.substring("/api/print/".length());
                     OutputStream os = null;
@@ -71,14 +73,14 @@ public class StartApplication extends Application {
 
 
                         // 设置HTTP状态码和响应头
-                        exchange.getResponseHeaders().set("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, response.getBytes().length);
+
+                        exchange.sendResponseHeaders(HttpStatus.OK.getCode(), response.getBytes().length);
                         os.write(response.getBytes());
                     } catch (Exception e) {
                         os = exchange.getResponseBody();
-                        ApiResponse<?> error = ApiResponse.error(500, "Server Error");
+                        ApiResponse<?> error = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.getCode(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
                         String errorJson = JsonUtil.objectToJson(error);
-                        exchange.sendResponseHeaders(500, errorJson.getBytes().length);
+                        exchange.sendResponseHeaders(HttpStatus.INTERNAL_SERVER_ERROR.getCode(), errorJson.getBytes().length);
                         os.write(errorJson.getBytes());
 
                     } finally {
