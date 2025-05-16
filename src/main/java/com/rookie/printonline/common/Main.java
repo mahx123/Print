@@ -34,38 +34,36 @@ public class Main {
 
         try {
             // 1. 解析XML模板
-            File xmlFile = new File("D:\\vx_storage\\xwechat_files\\mahuaixiao_5123\\msg\\file\\2025-05\\QR_Print_Template_100_32_2.0.xml");
+            File xmlFile = new File("E://xml/QR_Print_Template_100_32_2.0.xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true); // 关键设置
             Document doc = factory.newDocumentBuilder().parse(xmlFile);
             System.out.println("根元素: " + doc.getDocumentElement().getNodeName());
             // 遍历所有layout节点测试
-            NodeList layouts = doc.getElementsByTagName("layout");
-            System.out.println("找到layout数量: " + layouts.getLength());
             // 2. 创建JavaFX容器（按实际尺寸）
-//            Element page = doc.getDocumentElement();
-//            double widthMM = Double.parseDouble(page.getAttribute("width"));
-//            double heightMM = Double.parseDouble(page.getAttribute("height"));
-//
-//            Pane labelPane = new Pane();
-//            labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
-//
-//            // 3. 处理所有布局元素
-//            NodeList layouts = doc.getElementsByTagName("layout");
-//            for (int i = 0; i < layouts.getLength(); i++) {
-//                Element layout = (Element) layouts.item(i);
-//                processLayoutElement(layout, labelPane);
-//            }
-//
-//            // 4. 处理线条元素
-//            NodeList lines = doc.getElementsByTagName("line");
-//            for (int i = 0; i < lines.getLength(); i++) {
-//                Element line = (Element) lines.item(i);
-//                processLineElement(line, labelPane);
-//            }
+            Element page = doc.getDocumentElement();
+            double widthMM = Double.parseDouble(page.getAttribute("width"));
+            double heightMM = Double.parseDouble(page.getAttribute("height"));
+
+            Pane labelPane = new Pane();
+            labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+
+            // 3. 处理所有布局元素
+            NodeList layouts = doc.getElementsByTagName("layout");
+            for (int i = 0; i < layouts.getLength(); i++) {
+                Element layout = (Element) layouts.item(i);
+                processLayoutElement(layout, labelPane);
+            }
+
+            // 4. 处理线条元素
+            NodeList lines = doc.getElementsByTagName("line");
+            for (int i = 0; i < lines.getLength(); i++) {
+                Element line = (Element) lines.item(i);
+                processLineElement(line, labelPane);
+            }
 //
 //            // 5. 打印
-//            printJavaFXNode(labelPane);
+            printJavaFXNode(labelPane);
 
         } catch (Exception e) {
             e.printStackTrace();
