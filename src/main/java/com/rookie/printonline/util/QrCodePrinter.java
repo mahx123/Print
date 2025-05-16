@@ -9,6 +9,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.print.*;
@@ -104,15 +105,19 @@ public class QrCodePrinter {
     }
 
     public static void main(String[] args) {
-        // 准备数据
-        Map<String, String> data = new HashMap<>();
-        data.put("qrcode", "https://example.com/product/12345");
-        data.put("sn", "SN123456");
+        try {
+            // 准备数据
+            Map<String, String> data = new HashMap<>();
+            data.put("qrcode", "https://example.com/product/12345");
+            data.put("sn", "SN123456");
+            String path="D:\\vx_storage\\xwechat_files\\mahuaixiao_5123\\msg\\file\\2025-05\\QR_Print_Template_100_32_2.0.xml";
+            // 您的XML模板内容
+            String xmlTemplate = FileUtils.readFileToString(new File(path),"utf-8"); // 替换为您的完整XML内容
 
-        // 您的XML模板内容
-        String xmlTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>..."; // 替换为您的完整XML内容
-
-        // 生成并打印
-        generateAndPrintQrCode(xmlTemplate, data);
+            // 生成并打印
+            generateAndPrintQrCode(xmlTemplate, data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
