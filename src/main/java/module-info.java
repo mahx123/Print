@@ -9,6 +9,7 @@ module com.rookie.printonline {
     requires java.desktop;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires org.apache.commons.io;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
 
 }
