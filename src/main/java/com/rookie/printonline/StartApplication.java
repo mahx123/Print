@@ -1,8 +1,10 @@
 package com.rookie.printonline;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rookie.printonline.common.HttpUtils;
 import com.rookie.printonline.common.JsonUtil;
 import com.rookie.printonline.exe.PrintServe;
+import com.rookie.printonline.result.ApiResponse;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -45,27 +47,34 @@ public class StartApplication extends Application {
 
                     // 提取 `/api/data/` 后面的部分（如 "search"）
                     String action = path.substring("/api/print/".length());
+                    try {
+                        String response = "";
+                        switch (action) {
+                            case "search":
+                                List<String> allPrint = PrintServe.getAllPrint();
+                                ApiResponse<List<String>> success = ApiResponse.success(allPrint);
+                                response = new ObjectMapper().writeValueAsString(success);
+                                break;
+                            case "update":
+                                response = "";
+                                break;
+                            default:
+                                response = "{\"error\": \"Unknown action: " + action + "\"}";
+                                exchange.sendResponseHeaders(404, response.length());
+                                try (OutputStream os = exchange.getResponseBody()) {
+                                    os.write(response.getBytes());
+                                }
+                                return;
+                        }
 
-                    String response="";
-                    switch (action) {
-                        case "search":
-                            List<String> allPrint = PrintServe.getAllPrint();
-                            response = JsonUtil.objectToJson(allPrint);
-                            break;
-                        case "update":
-                            response = "";
-                            break;
-                        default:
-                            response = "{\"error\": \"Unknown action: " + action + "\"}";
-                            exchange.sendResponseHeaders(404, response.length());
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes());
-                            }
-                            return;
+
+                        // 设置HTTP状态码和响应头
+                        exchange.getResponseHeaders().set("Content-Type", "application/json");
+                        exchange.sendResponseHeaders(200, response.getBytes().length);
+                        exchange.getResponseBody().write(response.getBytes());
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-
-
-                    HttpUtils.sendJsonResponse(exchange, 200, response);
                 }
             });
 
