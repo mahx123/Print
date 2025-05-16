@@ -53,7 +53,7 @@ public class StartApplication extends Application {
                             case "search":
                                 List<String> allPrint = PrintServe.getAllPrint();
                                 ApiResponse<List<String>> success = ApiResponse.success(allPrint);
-                                response = new ObjectMapper().writeValueAsString(success);
+                                response = JsonUtil.objectToJson(success);
                                 break;
                             case "update":
                                 response = "";
