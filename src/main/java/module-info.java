@@ -13,6 +13,7 @@ module com.rookie.printonline {
     requires com.google.zxing;
     requires com.google.zxing.javase;
     requires freemarker;
+    requires org.dom4j;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
 
 }

@@ -70,10 +70,10 @@ public class QrTemplateProcessor {
         for (int i = 0; i < barcodeNodes.getLength(); i++) {
             Element barcode = (Element) barcodeNodes.item(i);
             if (barcode.getTextContent().contains("<%=_data.qrcode%>")) {
-                barcode.setTextContent(data.getQrcode());
+                barcode.setTextContent(data.getRightSideText());
 
                 // 生成二维码图片并保存
-                BufferedImage qrImage = generateQRCodeImage(data.getQrcode(), 200, 200);
+                BufferedImage qrImage = generateQRCodeImage(data.getRightSideText(), 200, 200);
                 File outputfile = new File("qrcode.png");
                 ImageIO.write(qrImage, "png", outputfile);
             }
@@ -84,7 +84,7 @@ public class QrTemplateProcessor {
         for (int i = 0; i < textNodes.getLength(); i++) {
             Element text = (Element) textNodes.item(i);
             if (text.getTextContent().contains("<%=_data.sn%>")) {
-                text.setTextContent(data.getSn());
+                text.setTextContent(data.getQrcodeContent());
             }
         }
     }

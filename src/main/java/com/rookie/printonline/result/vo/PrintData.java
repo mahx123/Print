@@ -1,33 +1,37 @@
 package com.rookie.printonline.result.vo;
 
-public class PrintData {
-    private String qrcode;  // 二维码内容
-    private String sn;      // 序列号（右边的数字）
+import java.util.List;
 
-    // 构造方法
-    public PrintData(String qrcode, String sn) {
-        this.qrcode = qrcode;
-        this.sn = sn;
+public class PrintData {
+    private String qrcodeContent;  // 二维码内容
+    private List<String> numbers;  // 右侧数字列表
+
+    public PrintData(String qrcodeContent, List<String> numbers) {
+        this.qrcodeContent = qrcodeContent;
+        this.numbers = numbers;
     }
 
     public PrintData() {
 
     }
 
-    // Getter和Setter
-    public String getQrcode() {
-        return qrcode;
+    // 生成右侧文本格式
+    public String getRightSideText() {
+        StringBuilder sb = new StringBuilder();
+        // 第一组6行数字
+        for (String num : numbers) {
+            sb.append(num).append("\n");
+        }
+        // 中间的"1 折线"
+        sb.append("1\n折线\n\n");
+        // 第二组6行数字
+        for (String num : numbers) {
+            sb.append(num).append("\n");
+        }
+        return sb.toString();
     }
 
-    public void setQrcode(String qrcode) {
-        this.qrcode = qrcode;
-    }
-
-    public String getSn() {
-        return sn;
-    }
-
-    public void setSn(String sn) {
-        this.sn = sn;
-    }
+    // getters
+    public String getQrcodeContent() { return qrcodeContent; }
+    public List<String> getNumbers() { return numbers; }
 }

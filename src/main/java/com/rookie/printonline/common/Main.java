@@ -1,119 +1,75 @@
 package com.rookie.printonline.common;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.rookie.printonline.result.vo.PrintData;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import javafx.scene.layout.StackPane;
+import org.w3c.dom.*;
 
-import javax.print.*;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.swing.*;
-import java.awt.*;
+import javax.imageio.ImageIO;
+import javax.swing.text.html.ImageView;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+import com.google.zxing.*;
+import com.google.zxing.common.*;
+import com.google.zxing.client.j2se.*;
 import java.awt.image.BufferedImage;
-import java.awt.print.*;
-import java.io.File;
-import java.util.Arrays;
+import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Main {
 
-    public static void main(String[] args) {
-        // 1. 准备数据
-        String continuousNumber = "0002300025664897590010"; // 扫描二维码得到的内容
-        String[] displayNumbers = {
-                "0000",
-                "2320",
-                "0025",
-                "6648",
-                "9759",
-                "0010"
-        };
+    public static void main(String[] args) throws Exception{
 
-        // 2. 生成二维码图片
-        BufferedImage qrImage = generateQRCode(continuousNumber, 200);
 
-        // 3. 创建带右侧数字的完整图片
-        BufferedImage combinedImage = createCombinedImage(qrImage, displayNumbers);
+        // 使用DOM解析XML模板
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = factory.newDocumentBuilder().parse(new File("D:\\vx_storage\\xwechat_files\\mahuaixiao_5123\\msg\\file\\2025-05\\QR_Print_Template_100_32_2.0.xml"));
 
-        // 4. 显示结果（实际使用时替换为打印代码）
-        displayImage(combinedImage);
+// 创建JavaFX容器
+        StackPane rootPane = new StackPane();
+        rootPane.setPrefSize(100, 32);  // 单位：毫米
 
-        // 5. 保存图片（可选）
-        saveImage(combinedImage, "qrcode_with_numbers.png");
-    }
+// 解析布局元素
+        NodeList layouts = doc.getElementsByTagName("layout");
+        for (int i = 0; i < layouts.getLength(); i++) {
+            Element layout = (Element) layouts.item(i);
+            double width = Double.parseDouble(layout.getAttribute("width"));
+            double height = Double.parseDouble(layout.getAttribute("height"));
+            double left = Double.parseDouble(layout.getAttribute("left"));
+            double top = Double.parseDouble(layout.getAttribute("top"));
 
-    // 生成二维码
-
-    // 生成二维码
-    private static BufferedImage generateQRCode(String content, int size) {
-        try {
-            Map<EncodeHintType, Object> hints = new HashMap<>();
-            hints.put(EncodeHintType.MARGIN, 1);
-            BitMatrix matrix = new MultiFormatWriter().encode(
-                    content, BarcodeFormat.QR_CODE, size, size, hints);
-            return MatrixToImageWriter.toBufferedImage(matrix);
-        } catch (Exception e) {
-            throw new RuntimeException("生成二维码失败", e);
+            // 构建文本节点
+            if (layout.getElementsByTagName("text").getLength() > 0) {
+                Text textNode = createTextNode(layout);
+              //  rootPane.getChildren().add(textNode);
+            }
+            // 构建二维码节点
+//            else if (layout.getElementsByTagName("barcode").getLength() > 0) {
+//                ImageView qrNode = createQRNode(layout);
+//                rootPane.getChildren().add(qrNode);
+//            }
         }
     }
 
-    // 创建组合图片（左侧二维码+右侧数字）
-    private static BufferedImage createCombinedImage(BufferedImage qrImage, String[] numbers) {
-        int qrWidth = qrImage.getWidth();
-        int qrHeight = qrImage.getHeight();
-        int textAreaWidth = 150; // 右侧文本区域宽度
-        int padding = 20; // 内边距
-
-        // 创建新图片
-        BufferedImage combined = new BufferedImage(
-                qrWidth + textAreaWidth,
-                qrHeight,
-                BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g = combined.createGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, combined.getWidth(), combined.getHeight());
-
-        // 绘制二维码（左侧）
-        g.drawImage(qrImage, padding, padding, null);
-
-        // 绘制数字（右侧）
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("SimHei", Font.BOLD, 16));
-
-        int xPos = qrWidth + padding;
-        int yPos = padding + 20;
-        int lineHeight = 25;
-
-        for (String number : numbers) {
-            g.drawString(number, xPos, yPos);
-            yPos += lineHeight;
-        }
-
-        g.dispose();
-        return combined;
+    // 打印分辨率转换（考虑300dpi标准）
+    private double mmToPixel(double mm, double dpi) {
+        return mm * dpi / 25.4;
     }
 
-    // 显示图片（测试用）
-    private static void displayImage(BufferedImage image) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new JLabel(new ImageIcon(image)));
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    // 保存图片到文件
-    private static void saveImage(BufferedImage image, String filename) {
-        try {
-            javax.imageio.ImageIO.write(image, "PNG", new File(filename));
-            System.out.println("图片已保存为: " + filename);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // 创建文本节点方法示例
+    private static Text createTextNode(Element layout) {
+        Element text = (Element) layout.getElementsByTagName("text").item(0);
+//        Text textNode = new Text(text.getTextContent());
+//
+//        // 样式映射（黑体/加粗/居中）
+//        String fontFamily = text.getAttribute("fontFamily");
+//        double fontSize = Double.parseDouble(text.getAttribute("fontSize"));
+//        textNode.setFont(Font.font(fontFamily,  FontWeight.BOLD, fontSize));
+//
+//        // 精确定位
+//        textNode.setTranslateX(mmToPixel(left,  300));
+//        textNode.setTranslateY(mmToPixel(top,  300));
+        return null;
     }
 }
