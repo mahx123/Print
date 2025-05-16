@@ -1,5 +1,7 @@
 package com.rookie.printonline;
 
+import com.rookie.printonline.common.JsonUtil;
+import com.rookie.printonline.exe.PrintServe;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,6 +15,7 @@ import java.net.InetSocketAddress;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 public class StartApplication extends Application {
     private static final int PORT = 8080; // HTTP 服务端口
@@ -45,7 +48,8 @@ public class StartApplication extends Application {
                     String response="";
                     switch (action) {
                         case "search":
-                            response = "{\"error\": \"Unknown action: " + action + "\"}";
+                            List<String> allPrint = PrintServe.getAllPrint();
+                            response = JsonUtil.objectToJson(allPrint);
                             break;
                         case "update":
                             response = "";
