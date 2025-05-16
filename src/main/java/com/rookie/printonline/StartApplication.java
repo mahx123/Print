@@ -73,7 +73,11 @@ public class StartApplication extends Application {
                         exchange.sendResponseHeaders(200, response.getBytes().length);
                         exchange.getResponseBody().write(response.getBytes());
                     }catch (Exception e){
-                        e.printStackTrace();
+                        ApiResponse<?> error = ApiResponse.error(500, "Server Error");
+                        String errorJson = JsonUtil.objectToJson(error);
+                        exchange.sendResponseHeaders(500, errorJson.getBytes().length);
+                        exchange.getResponseBody().write(errorJson.getBytes());
+
                     }
                 }
             });
