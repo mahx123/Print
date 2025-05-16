@@ -1,5 +1,6 @@
 package com.rookie.printonline;
 
+import com.rookie.printonline.common.HttpUtils;
 import com.rookie.printonline.common.JsonUtil;
 import com.rookie.printonline.exe.PrintServe;
 import javafx.application.Application;
@@ -63,12 +64,8 @@ public class StartApplication extends Application {
                             return;
                     }
 
-                    // 返回 JSON 响应
-                    exchange.getResponseHeaders().add("Content-Type", "application/json");
-                    exchange.sendResponseHeaders(200, response.length());
-                    try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(response.getBytes());
-                    }
+
+                    HttpUtils.sendJsonResponse(exchange, 200, response);
                 }
             });
 
