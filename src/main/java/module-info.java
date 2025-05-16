@@ -10,6 +10,9 @@ module com.rookie.printonline {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires org.apache.commons.io;
+    requires com.google.zxing;
+    requires com.google.zxing.javase;
+    requires freemarker;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
 
 }
