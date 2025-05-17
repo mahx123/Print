@@ -89,6 +89,101 @@ public class StartApplication extends Application {
     private static double mmToPx(double mm) {
         return mm / MM_TO_INCH * DPI;
     }
+    @Override
+    public void start(Stage stage) throws IOException {
+//        FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("hello-view.fxml"));
+//        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+//        stage.setTitle("Hello!");
+//        stage.setScene(scene);
+//        stage.show();
+//        // 启动 HTTP Server（在后台线程运行）
+//        startHttpServer();
+        // 1. 解析XML模板
+        File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        Document doc = null;
+        try {
+            doc = factory.newDocumentBuilder().parse(xmlFile);
+        } catch (SAXException e) {
+            throw new RuntimeException(e);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("根元素: " + doc.getDocumentElement().getNodeName());
+
+        // 2. 创建 JavaFX 容器
+        Element page = doc.getDocumentElement();
+        double widthMM = Double.parseDouble(page.getAttribute("width"));
+        double heightMM = Double.parseDouble(page.getAttribute("height"));
+
+        Pane labelPane = new Pane();
+        labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+
+        // 3. 处理布局元素
+        NodeList layouts = doc.getElementsByTagName("layout");
+        for (int i = 0; i < layouts.getLength(); i++) {
+            Element layout = (Element) layouts.item(i);
+            try {
+                processLayoutElement(layout, labelPane);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // 4. 处理线条元素
+        NodeList lines = doc.getElementsByTagName("line");
+        for (int i = 0; i < lines.getLength(); i++) {
+            Element line = (Element) lines.item(i);
+            processLineElement(line, labelPane);
+        }
+        saveNodeAsImage(labelPane,"123.png");
+        printJavaFXNode(labelPane);
+
+    }
+    private static void printJavaFXNode(Node node) {
+        // 临时添加到 Scene 以确保渲染
+        Stage tempStage = new Stage();
+        tempStage.setScene(new Scene(new Group(node)));
+        tempStage.show(); // 确保节点已渲染
+        tempStage.hide(); // 隐藏窗口
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+
+
+        if (job != null && job.showPrintDialog(null)) {
+            PageLayout pageLayout = job.getPrinter().createPageLayout(
+                    Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
+
+            // 缩放节点以适应纸张
+            // 3. 使用 A4 纸，无边距
+//            PageLayout pageLayout = job.getPrinter().createPageLayout(
+//                    Paper.A4,
+//                    PageOrientation.PORTRAIT,
+//                    Printer.MarginType.NONE
+//            );
+
+            // 4. 计算标签在 A4 纸上的位置（假设标签尺寸 100mm x 30mm）
+            double labelWidthPx = mmToPx(100);
+            double labelHeightPx = mmToPx(30);
+
+            // 5. 将节点定位在 A4 纸的左上角（可调整偏移量）
+            double offsetXPx = mmToPx(10); // 水平偏移 10mm
+            double offsetYPx = mmToPx(10); // 垂直偏移 10mm
+            node.setLayoutX(offsetXPx);
+            node.setLayoutY(offsetYPx);
+
+            boolean success = job.printPage(pageLayout, node);
+            System.out.println("Print success: " + success);
+            if (success) {
+                job.endJob();
+            } else {
+                System.err.println("Print failed. Status: " + job.getJobStatus());
+            }
+        } else {
+            System.err.println("无法创建打印任务");
+        }
+    }
     private static void processLayoutElement(Element layout, Pane parent) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
         double height = Double.parseDouble(layout.getAttribute("height"));
@@ -220,101 +315,8 @@ public class StartApplication extends Application {
             "qrcode", "PROD-12345",
             "sn", "SN-2023-001"
     );
-    @Override
-    public void start(Stage stage) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("hello-view.fxml"));
-//        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-//        stage.setTitle("Hello!");
-//        stage.setScene(scene);
-//        stage.show();
-//        // 启动 HTTP Server（在后台线程运行）
-//        startHttpServer();
-        // 1. 解析XML模板
-        File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        Document doc = null;
-        try {
-            doc = factory.newDocumentBuilder().parse(xmlFile);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("根元素: " + doc.getDocumentElement().getNodeName());
-
-        // 2. 创建 JavaFX 容器
-        Element page = doc.getDocumentElement();
-        double widthMM = Double.parseDouble(page.getAttribute("width"));
-        double heightMM = Double.parseDouble(page.getAttribute("height"));
-
-        Pane labelPane = new Pane();
-        labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
-
-        // 3. 处理布局元素
-        NodeList layouts = doc.getElementsByTagName("layout");
-        for (int i = 0; i < layouts.getLength(); i++) {
-            Element layout = (Element) layouts.item(i);
-            try {
-                processLayoutElement(layout, labelPane);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        // 4. 处理线条元素
-        NodeList lines = doc.getElementsByTagName("line");
-        for (int i = 0; i < lines.getLength(); i++) {
-            Element line = (Element) lines.item(i);
-            processLineElement(line, labelPane);
-        }
-        saveNodeAsImage(labelPane,"123.png");
-        printJavaFXNode(labelPane);
-
-    }
-    private static void printJavaFXNode(Node node) {
-        // 临时添加到 Scene 以确保渲染
-        Stage tempStage = new Stage();
-        tempStage.setScene(new Scene(new Group(node)));
-        tempStage.show(); // 确保节点已渲染
-        tempStage.hide(); // 隐藏窗口
-
-        PrinterJob job = PrinterJob.createPrinterJob();
 
 
-        if (job != null && job.showPrintDialog(null)) {
-            PageLayout pageLayout = job.getPrinter().createPageLayout(
-                    Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
-
-            // 缩放节点以适应纸张
-            // 3. 使用 A4 纸，无边距
-//            PageLayout pageLayout = job.getPrinter().createPageLayout(
-//                    Paper.A4,
-//                    PageOrientation.PORTRAIT,
-//                    Printer.MarginType.NONE
-//            );
-
-            // 4. 计算标签在 A4 纸上的位置（假设标签尺寸 100mm x 30mm）
-            double labelWidthPx = mmToPx(100);
-            double labelHeightPx = mmToPx(30);
-
-            // 5. 将节点定位在 A4 纸的左上角（可调整偏移量）
-            double offsetXPx = mmToPx(10); // 水平偏移 10mm
-            double offsetYPx = mmToPx(10); // 垂直偏移 10mm
-            node.setLayoutX(offsetXPx);
-            node.setLayoutY(offsetYPx);
-
-            boolean success = job.printPage(pageLayout, node);
-            System.out.println("Print success: " + success);
-            if (success) {
-                job.endJob();
-            } else {
-                System.err.println("Print failed. Status: " + job.getJobStatus());
-            }
-        } else {
-            System.err.println("无法创建打印任务");
-        }
-    }
     private void startHttpServer() {
         try {
             // 创建 HTTP Server，监听 8080 端口
