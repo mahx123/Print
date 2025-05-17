@@ -12,6 +12,7 @@ import com.rookie.printonline.exe.PrintServe;
 import com.rookie.printonline.result.ApiResponse;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -73,7 +74,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -81,7 +87,9 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.scene.text.Font;
 public class StartApplication extends Application {
     private static final int PORT = 8080; // HTTP 服务端口
 
@@ -92,60 +100,27 @@ public class StartApplication extends Application {
     }
     @Override
     public void start(Stage stage) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("hello-view.fxml"));
-//        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-//        stage.setTitle("Hello!");
-//        stage.setScene(scene);
-//        stage.show();
-//        // 启动 HTTP Server（在后台线程运行）
-//        startHttpServer();
-        // 1. 解析XML模板
-        File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        Document doc = null;
-        try {
-            doc = factory.newDocumentBuilder().parse(xmlFile);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("根元素: " + doc.getDocumentElement().getNodeName());
-
-        // 2. 创建 JavaFX 容器
-        Element page = doc.getDocumentElement();
-        double widthMM = Double.parseDouble(page.getAttribute("width"));
-        double heightMM = Double.parseDouble(page.getAttribute("height"));
-
-        Pane labelPane = new Pane();
-        labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
-
-        // 3. 处理布局元素
-        NodeList layouts = doc.getElementsByTagName("layout");
-        for (int i = 0; i < layouts.getLength(); i++) {
-            Element layout = (Element) layouts.item(i);
+        Button printBtn = new Button("Print XML");
+        printBtn.setOnAction(e -> {
             try {
-                processLayoutElement(layout, labelPane);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                Document doc = parseXML("D:\\xml\\QR_Print_Template_100_32_2.0.xml");
+                TextFlow printableNode = createPrintableNode(doc);
+                printNode(printableNode);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        }
+        });
 
-        // 4. 处理线条元素
-        NodeList lines = doc.getElementsByTagName("line");
-        for (int i = 0; i < lines.getLength(); i++) {
-            Element line = (Element) lines.item(i);
-            processLineElement(line, labelPane);
-        }
-        saveNodeAsImage(labelPane,"D://123.png");
-       printJavaFXNode(labelPane);
+        VBox root = new VBox(printBtn);
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.show();
 
     }
     private static void printJavaFXNode(Node node) {
         // 1. 先缩放节点到实际物理尺寸（100mm×30mm）
-        double targetWidthPx = mmToPx(100); // 100mm → 1181px (300DPI)
-        double targetHeightPx = mmToPx(30); // 30mm → 354px
+        double targetWidthPx = mmToPx(0.1); // 100mm → 1181px (300DPI)
+        double targetHeightPx = mmToPx(0.3); // 30mm → 354px
 
         double scaleX = targetWidthPx / node.getBoundsInParent().getWidth();
         double scaleY = targetHeightPx / node.getBoundsInParent().getHeight();
@@ -193,6 +168,36 @@ public class StartApplication extends Application {
             // 打印系统级错误信息
             if (job.getJobStatus() == PrinterJob.JobStatus.ERROR) {
                // System.err.println("系统报告：" + job.getPrinter().getPrinterStatus());
+            }
+        }
+    }
+    public Document parseXML(String filePath) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new File(filePath));
+    }
+    public TextFlow createPrintableNode(Document doc) {
+        TextFlow textFlow = new TextFlow();
+        textFlow.setPadding(new Insets(10));
+
+        // 简单示例：提取XML文本内容
+        String content = doc.getDocumentElement().getTextContent();
+
+        Text text = new Text(content);
+        text.setFont(Font.font("Arial", 12));
+        textFlow.getChildren().add(text);
+
+        return textFlow;
+    }
+    public void printNode(Node node) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            boolean showDialog = job.showPrintDialog(node.getScene().getWindow());
+            if (showDialog) {
+                boolean success = job.printPage(node);
+                if (success) {
+                    job.endJob();
+                }
             }
         }
     }
