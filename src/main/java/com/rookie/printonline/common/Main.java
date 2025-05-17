@@ -45,7 +45,7 @@ public class Main {
 
         try {
             // 1. 解析XML模板
-            File xmlFile = new File("E://xml/QR_Print_Template_100_32_2.0.xml");
+            File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true); // 关键设置
             Document doc = factory.newDocumentBuilder().parse(xmlFile);
@@ -72,7 +72,7 @@ public class Main {
                 Element line = (Element) lines.item(i);
                 processLineElement(line, labelPane);
             }
-            saveNodeAsImage(labelPane, "print_preview.png");
+         //   saveNodeAsImage(labelPane, "print_preview.png");
 //
 //            // 5. 打印
             printJavaFXNode(labelPane);
@@ -220,21 +220,38 @@ public class Main {
     }
 
     private static void printJavaFXNode(Node node) {
+        // 确保节点属于一个场景
+        new Scene(new Group(node)); // 临时场景
+
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null && job.showPrintDialog(null)) {
+            // 打印状态监听
+            job.jobStatusProperty().addListener((obs, oldStatus, newStatus) -> {
+                System.out.println("Job status: " + newStatus);
+            });
+
             PageLayout pageLayout = job.getPrinter().createPageLayout(
                     Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
 
-            // 缩放节点以适应纸张
+            // 调试信息
+            System.out.println("Node size: " + node.getBoundsInParent());
+            System.out.println("Printable area: " + pageLayout.getPrintableWidth() + "x" + pageLayout.getPrintableHeight());
+
+            // 缩放
             double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInParent().getWidth();
             double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInParent().getHeight();
             double scale = Math.min(scaleX, scaleY);
             node.getTransforms().add(new javafx.scene.transform.Scale(scale, scale));
 
             boolean success = job.printPage(pageLayout, node);
+            System.out.println("Print success: " + success);
             if (success) {
                 job.endJob();
+            } else {
+                System.err.println("Print failed: " + job.getJobStatus());
             }
+        } else {
+            System.err.println("No printer job could be created");
         }
     }
 }
