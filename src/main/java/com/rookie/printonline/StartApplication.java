@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
@@ -142,46 +143,57 @@ public class StartApplication extends Application {
 
     }
     private static void printJavaFXNode(Node node) {
-        // 临时添加到 Scene 以确保渲染
+        // 1. 先缩放节点到实际物理尺寸（100mm×30mm）
+        double targetWidthPx = mmToPx(100); // 100mm → 1181px (300DPI)
+        double targetHeightPx = mmToPx(30); // 30mm → 354px
+
+        double scaleX = targetWidthPx / node.getBoundsInParent().getWidth();
+        double scaleY = targetHeightPx / node.getBoundsInParent().getHeight();
+        double scale = Math.min(scaleX, scaleY);
+        node.getTransforms().add(new Scale(scale, scale));
+
+        // 2. 必须渲染到Scene（关键步骤！）
         Stage tempStage = new Stage();
-        tempStage.setScene(new Scene(new Group(node)));
-        tempStage.show(); // 确保节点已渲染
-        tempStage.hide(); // 隐藏窗口
+        Scene tempScene = new Scene(new Group(node));
+        tempStage.setScene(tempScene);
+        tempStage.show(); // 必须显示才能渲染
+        Platform.runLater(() -> tempStage.hide()); // 异步隐藏
 
+        // 3. 创建打印任务
         PrinterJob job = PrinterJob.createPrinterJob();
+        if (job == null) {
+            System.err.println("错误：无法创建打印任务");
+            return;
+        }
 
+        // 4. 设置A4纸张和边距（必须用HARDWARE_MINIMUM）
+        PageLayout pageLayout = job.getPrinter().createPageLayout(
+                Paper.A4,
+                PageOrientation.PORTRAIT,
+                Printer.MarginType.HARDWARE_MINIMUM
+        );
 
-        if (job != null && job.showPrintDialog(null)) {
-            PageLayout pageLayout = job.getPrinter().createPageLayout(
-                    Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
+        // 5. 计算精确位置（10mm,10mm）
+        double offsetXPx = mmToPx(10);
+        double offsetYPx = mmToPx(10);
+        node.setLayoutX(offsetXPx);
+        node.setLayoutY(offsetYPx);
 
-            // 缩放节点以适应纸张
-            // 3. 使用 A4 纸，无边距
-//            PageLayout pageLayout = job.getPrinter().createPageLayout(
-//                    Paper.A4,
-//                    PageOrientation.PORTRAIT,
-//                    Printer.MarginType.NONE
-//            );
+        // 6. 打印调试信息
+        System.out.println("节点尺寸：" + node.getBoundsInParent());
+        System.out.println("可打印区域：" + pageLayout.getPrintableWidth() + "×" + pageLayout.getPrintableHeight());
 
-            // 4. 计算标签在 A4 纸上的位置（假设标签尺寸 100mm x 30mm）
-            double labelWidthPx = mmToPx(100);
-            double labelHeightPx = mmToPx(30);
-
-            // 5. 将节点定位在 A4 纸的左上角（可调整偏移量）
-            double offsetXPx = mmToPx(10); // 水平偏移 10mm
-            double offsetYPx = mmToPx(10); // 垂直偏移 10mm
-            node.setLayoutX(offsetXPx);
-            node.setLayoutY(offsetYPx);
-
-            boolean success = job.printPage(pageLayout, node);
-            System.out.println("Print success: " + success);
-            if (success) {
-                job.endJob();
-            } else {
-                System.err.println("Print failed. Status: " + job.getJobStatus());
-            }
+        // 7. 执行打印
+        boolean success = job.printPage(pageLayout, node);
+        if (success) {
+            job.endJob();
+            System.out.println("打印成功！");
         } else {
-            System.err.println("无法创建打印任务");
+            System.err.println("打印失败！状态：" + job.getJobStatus());
+            // 打印系统级错误信息
+            if (job.getJobStatus() == PrinterJob.JobStatus.ERROR) {
+               // System.err.println("系统报告：" + job.getPrinter().getPrinterStatus());
+            }
         }
     }
     private static void processLayoutElement(Element layout, Pane parent) throws Exception {
