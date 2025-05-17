@@ -138,8 +138,8 @@ public class StartApplication extends Application {
             Element line = (Element) lines.item(i);
             processLineElement(line, labelPane);
         }
-        saveNodeAsImage(labelPane,"123.png");
-       // printJavaFXNode(labelPane);
+        saveNodeAsImage(labelPane,"D://123.png");
+       printJavaFXNode(labelPane);
 
     }
     private static void printJavaFXNode(Node node) {
