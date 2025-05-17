@@ -45,7 +45,7 @@ public class Main {
 
         try {
             // 1. 解析XML模板
-            File xmlFile = new File("E://xml/QR_Print_Template_100_32_2.0.xml");
+            File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true); // 关键设置
             Document doc = factory.newDocumentBuilder().parse(xmlFile);
@@ -72,7 +72,7 @@ public class Main {
                 Element line = (Element) lines.item(i);
                 processLineElement(line, labelPane);
             }
-            saveNodeAsImage(labelPane, "print_preview.png");
+         //   saveNodeAsImage(labelPane, "print_preview.png");
 //
 //            // 5. 打印
             printJavaFXNode(labelPane);
