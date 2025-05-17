@@ -107,7 +107,19 @@ public class StartApplication extends Application {
             try {
                 Document doc = parseXML("D:\\xml\\QR_Print_Template_100_32_2.0.xml");
                 TextFlow printableNode = createPrintableNode(doc);
-               // stage.show();
+                printableNode.setStyle("-fx-background-color: white; -fx-padding: 10px;");
+
+                Text text1 = new Text("Hello, ");
+                text1.setStyle("-fx-font-size: 20px; -fx-fill: red;");
+
+                Text text2 = new Text("JavaFX!");
+                text2.setStyle("-fx-font-size: 24px; -fx-fill: blue; -fx-font-weight: bold;");
+
+                printableNode.getChildren().addAll(text1, text2);
+
+                // 生成图片
+                WritableImage image = textFlowToImage(printableNode);
+                saveImage(image, "textflow_image.png");
 
                 // 添加短暂延迟确保窗口完全初始化
                 PauseTransition pause = new PauseTransition(Duration.millis(100));
@@ -123,6 +135,29 @@ public class StartApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
+    }
+    private void saveImage(WritableImage image, String filename) {
+        try {
+            File file = new File(filename);
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            System.out.println("Image saved to: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("Failed to save image: " + e.getMessage());
+        }
+    }
+    private WritableImage textFlowToImage(TextFlow textFlow) {
+        // 确保TextFlow已完成布局
+        textFlow.snapshot(null, null);
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        // 计算TextFlow的实际大小
+        double width = textFlow.getBoundsInParent().getWidth();
+        double height = textFlow.getBoundsInParent().getHeight();
+
+        // 创建合适大小的图片
+        return textFlow.snapshot(params, new WritableImage((int)width, (int)height));
     }
     private static void printJavaFXNode(Node node) {
         // 1. 先缩放节点到实际物理尺寸（100mm×30mm）
