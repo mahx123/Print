@@ -10,6 +10,7 @@ import com.rookie.printonline.common.JsonUtil;
 import com.rookie.printonline.enums.HttpStatus;
 import com.rookie.printonline.exe.PrintServe;
 import com.rookie.printonline.result.ApiResponse;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -48,6 +49,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -105,7 +107,12 @@ public class StartApplication extends Application {
             try {
                 Document doc = parseXML("D:\\xml\\QR_Print_Template_100_32_2.0.xml");
                 TextFlow printableNode = createPrintableNode(doc);
-                printNode(printableNode);
+               // stage.show();
+
+                // 添加短暂延迟确保窗口完全初始化
+                PauseTransition pause = new PauseTransition(Duration.millis(100));
+                pause.setOnFinished(event -> printNode(printableNode, stage));
+                pause.play();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -189,17 +196,22 @@ public class StartApplication extends Application {
 
         return textFlow;
     }
-    public void printNode(Node node) {
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null) {
-            boolean showDialog = job.showPrintDialog(node.getScene().getWindow());
-            if (showDialog) {
-                boolean success = job.printPage(node);
-                if (success) {
-                    job.endJob();
+    public void printNode(Node node,Stage ownerWindow) {
+        Platform.runLater(() -> {
+            // 确保布局已完成
+            node.applyCss();
+         //   ownerWindow.layout();
+
+            PrinterJob job = PrinterJob.createPrinterJob();
+            if (job != null) {
+                if (job.showPrintDialog(null)) {
+                    boolean success = job.printPage(node);
+                    if (success) {
+                        job.endJob();
+                    }
                 }
             }
-        }
+        });
     }
     private static void processLayoutElement(Element layout, Pane parent) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
