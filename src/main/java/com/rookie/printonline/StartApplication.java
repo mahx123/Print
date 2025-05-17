@@ -139,7 +139,7 @@ public class StartApplication extends Application {
             processLineElement(line, labelPane);
         }
         saveNodeAsImage(labelPane,"123.png");
-        printJavaFXNode(labelPane);
+       // printJavaFXNode(labelPane);
 
     }
     private static void printJavaFXNode(Node node) {

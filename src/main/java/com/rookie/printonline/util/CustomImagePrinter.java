@@ -80,7 +80,7 @@ public class CustomImagePrinter implements Printable {
             format.setPaper(paper);
 
             // 设置打印内容
-            job.setPrintable(new CustomImagePrinter("D://out.png"), format);
+            job.setPrintable(new CustomImagePrinter("D://123.png"), format);
 
             // 显示打印对话框
             if (job.printDialog()) {
