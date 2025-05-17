@@ -84,7 +84,7 @@ import java.util.Map;
 public class StartApplication extends Application {
     private static final int PORT = 8080; // HTTP 服务端口
 
-    private static final double DPI = 72; // 标准DPI
+    private static final double DPI = 300; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
     private static double mmToPx(double mm) {
         return mm / MM_TO_INCH * DPI;
@@ -166,7 +166,35 @@ public class StartApplication extends Application {
 
         return new ImageView(new Image(new ByteArrayInputStream(os.toByteArray())));
     }
+    /**
+     * 将 JavaFX Node 保存为图片文件
+     * @param node     要保存的节点（如 Pane、Group）
+     * @param filePath 图片保存路径（如 "output.png"）
+     */
+    private static void saveNodeAsImage(Node node, String filePath) {
+        // 1. 确保节点已正确渲染（临时添加到 Scene）
+        Scene scene = new Scene(new Group(node));
 
+        // 2. 创建 WritableImage 并捕获节点内容
+        WritableImage image = new WritableImage(
+                (int) node.getBoundsInParent().getWidth(),
+                (int) node.getBoundsInParent().getHeight()
+        );
+        node.snapshot(null, image);
+
+        // 3. 保存为 PNG 文件
+        File file = new File(filePath);
+        try {
+            ImageIO.write(
+                    SwingFXUtils.fromFXImage(image, null), // 转换 JavaFX Image 为 BufferedImage
+                    "png", // 图片格式（可选 "png"、"jpg" 等）
+                    file
+            );
+            System.out.println("图片已保存到: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("保存图片失败: " + e.getMessage());
+        }
+    }
     private static void applyTextStyle(Text text, String style) {
         String[] styles = style.split(";");
         for (String s : styles) {
@@ -240,6 +268,7 @@ public class StartApplication extends Application {
             Element line = (Element) lines.item(i);
             processLineElement(line, labelPane);
         }
+        saveNodeAsImage(labelPane,"123.png");
         printJavaFXNode(labelPane);
 
     }
@@ -251,15 +280,29 @@ public class StartApplication extends Application {
         tempStage.hide(); // 隐藏窗口
 
         PrinterJob job = PrinterJob.createPrinterJob();
+
+
         if (job != null && job.showPrintDialog(null)) {
             PageLayout pageLayout = job.getPrinter().createPageLayout(
                     Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
 
             // 缩放节点以适应纸张
-            double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInParent().getWidth();
-            double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInParent().getHeight();
-            double scale = Math.min(scaleX, scaleY);
-            node.getTransforms().add(new javafx.scene.transform.Scale(scale, scale));
+            // 3. 使用 A4 纸，无边距
+//            PageLayout pageLayout = job.getPrinter().createPageLayout(
+//                    Paper.A4,
+//                    PageOrientation.PORTRAIT,
+//                    Printer.MarginType.NONE
+//            );
+
+            // 4. 计算标签在 A4 纸上的位置（假设标签尺寸 100mm x 30mm）
+            double labelWidthPx = mmToPx(100);
+            double labelHeightPx = mmToPx(30);
+
+            // 5. 将节点定位在 A4 纸的左上角（可调整偏移量）
+            double offsetXPx = mmToPx(10); // 水平偏移 10mm
+            double offsetYPx = mmToPx(10); // 垂直偏移 10mm
+            node.setLayoutX(offsetXPx);
+            node.setLayoutY(offsetYPx);
 
             boolean success = job.printPage(pageLayout, node);
             System.out.println("Print success: " + success);
