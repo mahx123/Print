@@ -83,7 +83,7 @@ public class Main extends Application {
             Scene scene = new Scene(new Group(labelPane));
             primaryStage.setScene(scene);
             primaryStage.show();
-
+            saveNodeAsImage(labelPane, "456.png");
             // 5. 延迟打印以确保渲染完成
             PauseTransition delay = new PauseTransition(Duration.millis(400));
             delay.setOnFinished(event -> printJavaFXNode(labelPane));
