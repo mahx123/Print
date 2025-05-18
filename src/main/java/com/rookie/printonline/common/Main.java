@@ -142,6 +142,7 @@ public class Main extends Application {
         }
 
         // 处理文本
+        // 处理文本
         NodeList texts = layout.getElementsByTagName("text");
         if (texts.getLength() > 0) {
             Element text = (Element) texts.item(0);
@@ -150,10 +151,18 @@ public class Main extends Application {
                     .replace("<%=_data.sn%>", DATA.get("sn"));
 
             Text textNode = new Text(content);
+
+            // 应用XML中定义的样式
             applyTextStyle(textNode, text.getAttribute("style"));
 
+            // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(mmToPx(left));
-            textNode.setLayoutY(mmToPx(top + getFontSize(text.getAttribute("style")) / 2)); // 垂直居中调整
+            textNode.setLayoutY(mmToPx(top + getFontSize(text.getAttribute("style")) / 2));
+
+            // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
+            if (content.contains("\n")) {
+                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+            }
 
             parent.getChildren().add(textNode);
         }
@@ -180,9 +189,10 @@ public class Main extends Application {
     }
 
     private static ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
-        int sizePx = (int) mmToPx(Math.min(widthMM, heightMM));
+        int sizePx_w = (int) mmToPx(widthMM);
+        int sizePx_h = (int) mmToPx(heightMM);
         BitMatrix matrix = new MultiFormatWriter().encode(
-                content, BarcodeFormat.QR_CODE, sizePx, sizePx);
+                content, BarcodeFormat.QR_CODE, sizePx_w, sizePx_h);
 
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -213,11 +223,11 @@ public class Main extends Application {
         }
     }
     private static final Map<String, String> DATA = Map.of(
-            "qrcode", "PROD-12345",
+            "qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
             "sn", "SN-2023-001"
     );
 
-    private static final double DPI = 72; // 标准DPI
+    private static final double DPI = 300; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
     private static double getFontSize(String style) {
         String[] styles = style.split(";");
@@ -259,17 +269,16 @@ public class Main extends Application {
                         Printer.MarginType.HARDWARE_MINIMUM
                 );
 
-// 计算80mm/148mm的垂直缩放比例
-                double scaleY = mmToPx(80) / mmToPx(148);
-                node.getTransforms().add(new Scale(1.0, 1));
-
-                // 计算缩放比例
-
-
-                // 应用缩放
+                // 移除旧变换
                 node.getTransforms().clear();
-                //  node.getTransforms().add(new Scale(scale, scale));
 
+                // 计算缩放比例（确保内容适配标签纸）
+                double scaleX = mmToPx(100) / node.getBoundsInParent().getWidth();
+                double scaleY = mmToPx(30) / node.getBoundsInParent().getHeight();
+                double scale = Math.min(scaleX, scaleY);
+
+                // 应用缩放（保持原始比例）
+                node.getTransforms().add(new Scale(scale, scale));
                 boolean success = job.printPage(pageLayout, node);
                 if (success) {
                     job.endJob();
