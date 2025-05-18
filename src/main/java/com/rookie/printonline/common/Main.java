@@ -261,7 +261,7 @@ public class Main extends Application {
 
 // 计算80mm/148mm的垂直缩放比例
                 double scaleY = mmToPx(80) / mmToPx(148);
-                node.getTransforms().add(new Scale(1.0, scaleY));
+                node.getTransforms().add(new Scale(1.0, 1));
 
                 // 计算缩放比例
 
