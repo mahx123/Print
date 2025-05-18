@@ -120,12 +120,55 @@ public class Main extends Application {
         }
     }
 
+    private static Map<String, String> parseStyle(String style) {
+        Map<String, String> styleMap = new HashMap<>();
+        if (style == null || style.isEmpty()) return styleMap;
+
+        String[] styles = style.split(";");
+        for (String s : styles) {
+            String[] kv = s.split(":");
+            if (kv.length == 2) {
+                styleMap.put(kv[0].trim(), kv[1].trim());
+            }
+        }
+        return styleMap;
+    }
+
+    private static void applyLayoutStyle(Pane pane, String style) {
+        Map<String, String> styleMap = parseStyle(style);
+
+        // 背景色
+        if (styleMap.containsKey("backgroundColor")) {
+            pane.setStyle("-fx-background-color: " + styleMap.get("backgroundColor") + ";");
+        }
+
+        // 边框
+        if (styleMap.containsKey("borderColor")) {
+            pane.setStyle(pane.getStyle() +
+                    "-fx-border-color: " + styleMap.get("borderColor") + ";" +
+                    "-fx-border-width: 1px;");
+        }
+
+        // zIndex
+        if (styleMap.containsKey("zIndex")) {
+            pane.setViewOrder(-Double.parseDouble(styleMap.get("zIndex")));
+        }
+    }
     private static void processLayoutElement(Element layout, Pane parent) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
         double height = Double.parseDouble(layout.getAttribute("height"));
         double left = Double.parseDouble(layout.getAttribute("left"));
         double top = Double.parseDouble(layout.getAttribute("top"));
 
+        // 创建布局容器（用于承载所有子元素）
+        Pane layoutContainer = new Pane();
+        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height));
+        layoutContainer.setLayoutX(mmToPx(left));
+        layoutContainer.setLayoutY(mmToPx(top));
+        // 解析并应用layout的style属性
+        if (layout.hasAttribute("style")) {
+            applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
+        }
         // 处理二维码
         NodeList barcodes = layout.getElementsByTagName("barcode");
         if (barcodes.getLength() > 0) {
@@ -139,6 +182,7 @@ public class Main extends Application {
             }
             return;
         }
+
 
         // 处理文本
         // 处理文本
