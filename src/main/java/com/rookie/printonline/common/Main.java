@@ -82,7 +82,7 @@ public class Main extends Application {
             // 4. 将节点添加到场景并显示
             Scene scene = new Scene(new Group(labelPane));
             primaryStage.setScene(scene);
-            primaryStage.show();
+            //primaryStage.show();
             saveNodeAsImage(labelPane, "456.png");
             // 5. 延迟打印以确保渲染完成
             PauseTransition delay = new PauseTransition(Duration.millis(400));
