@@ -3,7 +3,9 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.print.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -22,6 +24,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -39,48 +44,57 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Main {
+public class Main extends Application {
+    public static void main(String[] args) {
+        launch(args);  // 使用JavaFX标准启动方式
+    }
 
-    public static void main(String[] args) throws Exception{
+    @Override
+    public void start(Stage primaryStage) throws Exception {
 
         try {
             // 1. 解析XML模板
             File xmlFile = new File("E://xml/QR_Print_Template_100_32_2.0.xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true); // 关键设置
+            factory.setNamespaceAware(true);
             Document doc = factory.newDocumentBuilder().parse(xmlFile);
-            System.out.println("根元素: " + doc.getDocumentElement().getNodeName());
-            // 遍历所有layout节点测试
-            // 2. 创建JavaFX容器（按实际尺寸）
+
+            // 2. 创建JavaFX容器
             Element page = doc.getDocumentElement();
             double widthMM = Double.parseDouble(page.getAttribute("width"));
             double heightMM = Double.parseDouble(page.getAttribute("height"));
 
             Pane labelPane = new Pane();
             labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+            labelPane.setStyle("-fx-background-color: white;");
 
-            // 3. 处理所有布局元素
+            // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");
             for (int i = 0; i < layouts.getLength(); i++) {
-                Element layout = (Element) layouts.item(i);
-                processLayoutElement(layout, labelPane);
+                processLayoutElement((Element) layouts.item(i), labelPane);
             }
 
-            // 4. 处理线条元素
             NodeList lines = doc.getElementsByTagName("line");
             for (int i = 0; i < lines.getLength(); i++) {
-                Element line = (Element) lines.item(i);
-                processLineElement(line, labelPane);
+                processLineElement((Element) lines.item(i), labelPane);
             }
-         //   saveNodeAsImage(labelPane, "print_preview.png");
-//
-//            // 5. 打印
-            printJavaFXNode(labelPane);
+
+            // 4. 将节点添加到场景并显示
+            Scene scene = new Scene(new Group(labelPane));
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+            // 5. 延迟打印以确保渲染完成
+            PauseTransition delay = new PauseTransition(Duration.millis(400));
+            delay.setOnFinished(event -> printJavaFXNode(labelPane));
+            delay.play();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
+
 
     private static void saveNodeAsImage(Node node, String filePath) {
         // 1. 确保节点已正确渲染（可能需要临时添加到 Scene）
@@ -219,22 +233,47 @@ public class Main {
         return mm / MM_TO_INCH * DPI;
     }
 
+
+    // 修改打印方法
     private static void printJavaFXNode(Node node) {
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null && job.showPrintDialog(null)) {
-            PageLayout pageLayout = job.getPrinter().createPageLayout(
-                    Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
 
-            // 缩放节点以适应纸张
-            double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInParent().getWidth();
-            double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInParent().getHeight();
-            double scale = Math.min(scaleX, scaleY);
-            node.getTransforms().add(new javafx.scene.transform.Scale(scale, scale));
+        // 确保布局完成
+        node.applyCss();
 
-            boolean success = job.printPage(pageLayout, node);
-            if (success) {
-                job.endJob();
+
+        // 延迟执行
+        Platform.runLater(() -> {
+            //   PrinterJob job = PrinterJob.createPrinterJob();
+            // 确保节点已完成布局
+            node.snapshot(null, null);
+
+            PrinterJob job = PrinterJob.createPrinterJob();
+            if (job != null && job.showPrintDialog(null)) {
+                // 使用HARDWARE_MINIMUM边距
+                PageLayout pageLayout = job.getPrinter().createPageLayout(
+                        Paper.A4,
+                        PageOrientation.PORTRAIT,
+                        Printer.MarginType.HARDWARE_MINIMUM);
+
+                // 计算缩放比例
+                double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInParent().getWidth();
+                double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInParent().getHeight();
+                double scale = Math.min(scaleX, scaleY);
+
+                // 应用缩放
+                node.getTransforms().clear();
+                node.getTransforms().add(new Scale(scale, scale));
+
+                boolean success = job.printPage(pageLayout, node);
+                if (success) {
+                    job.endJob();
+                    System.out.println("打印成功");
+                } else {
+                    System.out.println("打印失败");
+                }
             }
-        }
+
+        });
+
     }
 }

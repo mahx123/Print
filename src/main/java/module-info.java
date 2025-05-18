@@ -1,6 +1,7 @@
 module com.rookie.printonline {
     requires javafx.controls;
     requires javafx.fxml;
+    exports com.rookie.printonline.common;
 
 
     opens com.rookie.printonline to javafx.fxml;
