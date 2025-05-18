@@ -250,19 +250,25 @@ public class Main extends Application {
             PrinterJob job = PrinterJob.createPrinterJob();
             if (job != null && job.showPrintDialog(null)) {
                 // 使用HARDWARE_MINIMUM边距
+// 使用100mm×148mm的明信片规格（高度需手动限制）
+                Paper closestPaper = Paper.JAPANESE_POSTCARD;
+
                 PageLayout pageLayout = job.getPrinter().createPageLayout(
-                        Paper.A4,
+                        closestPaper,
                         PageOrientation.PORTRAIT,
-                        Printer.MarginType.HARDWARE_MINIMUM);
+                        Printer.MarginType.HARDWARE_MINIMUM
+                );
+
+// 计算80mm/148mm的垂直缩放比例
+                double scaleY = mmToPx(80) / mmToPx(148);
+                node.getTransforms().add(new Scale(1.0, scaleY));
 
                 // 计算缩放比例
-                double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInParent().getWidth();
-                double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInParent().getHeight();
-                double scale = Math.min(scaleX, scaleY);
+
 
                 // 应用缩放
                 node.getTransforms().clear();
-                node.getTransforms().add(new Scale(scale, scale));
+                //  node.getTransforms().add(new Scale(scale, scale));
 
                 boolean success = job.printPage(pageLayout, node);
                 if (success) {
