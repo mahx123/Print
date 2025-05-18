@@ -15,8 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
@@ -217,6 +216,14 @@ public class Main extends Application {
                 case "fontWeight":
                     if ("bold".equals(kv[1])) {
                         text.setStyle("-fx-font-weight: bold;");
+                    }
+                case "align":
+                    if ("center".equals(kv[1].trim())) {
+                        text.setTextAlignment(TextAlignment.CENTER);
+                    }
+                case "valign":
+                    if ("center".equals(kv[1].trim())) {
+                        text.setTextAlignment(TextAlignment.CENTER);
                     }
                     break;
             }
