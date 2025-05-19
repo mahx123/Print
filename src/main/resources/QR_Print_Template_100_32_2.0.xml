@@ -10,7 +10,7 @@
 		<layout 
             editor:_for_="169874052945135"
             
-            id="1698740529451118" width="5.1" height="14" left="28.8" top="0"  style="zIndex:3;">
+            id="1698740529451118" width="5.1" height="14" left="28.8" top="5.5"  style="zIndex:3;">
             <text  
                 style="fontFamily:黑体;fontWeight:bold;fontSize:25;align:center;valign:top;">
 <![CDATA[O
@@ -23,14 +23,14 @@ C]]>
 		<layout 
             editor:_for_="169874060404498"
             
-            id="1698740604057157" width="25" height="25" left="3" top="3.5"  style="zIndex:4;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
+            id="1698740604057157" width="25" height="25" left="3" top="7.5"  style="zIndex:4;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
 		</layout>
 		<layout 
             editor:_for_="1698740643252641"
             
             id="1698740643252790" width="7.5" height="20" left="25" top="0"  style="zIndex:5;">
             <text editor:_printName_="标签内容" 
-                style="fontFamily:SimHei;fontWeight:bold;fontSize:25;">
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:30;">
                 <![CDATA[<%=_data.qrcode%>]]>
             </text>
         

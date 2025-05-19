@@ -198,7 +198,7 @@ public class Main extends Application {
 
             // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(mmToPx(left));
-            textNode.setLayoutY(mmToPx(top + getFontSize(text.getAttribute("style")) / 2));
+            textNode.setLayoutY(mmToPx(top+2));
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
@@ -261,7 +261,7 @@ public class Main extends Application {
                     }
                 case "align":
                     if ("center".equals(kv[1].trim())) {
-                        text.setTextAlignment(TextAlignment.CENTER);
+                      //  text.setTextAlignment(TextAlignment.CENTER);
                     }
                 case "valign":
                     if ("center".equals(kv[1].trim())) {
