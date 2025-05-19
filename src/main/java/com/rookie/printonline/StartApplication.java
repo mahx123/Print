@@ -105,7 +105,7 @@ public class StartApplication extends Application {
         Button printBtn = new Button("Print XML");
         printBtn.setOnAction(e -> {
             try {
-                Document doc = parseXML("E:\\xml\\QR_Print_Template_100_32_2.0.xml");
+                Document doc = parseXML("D:\\xml\\QR_Print_Template_100_32_2.0.xml");
                 TextFlow printableNode = createPrintableNode(doc);
                 printableNode.setStyle("-fx-background-color: white; -fx-padding: 10px;");
 
