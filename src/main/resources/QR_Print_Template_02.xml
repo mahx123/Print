@@ -10,9 +10,9 @@
 		<layout 
             editor:_for_="169874052945135"
             
-            id="1698740529451118" width="5.1" height="14" left="29.5" top="8"  style="zIndex:3;">
+            id="1698740529451118" width="5.1" height="24" left="39.8" top="4"  style="zIndex:3;">
             <text  
-                style="fontFamily:黑体;fontWeight:bold;fontSize:42;align:center;valign:top;">
+                style="fontFamily:黑体;fontWeight:bold;fontSize:15;align:center;valign:middle;">
 <![CDATA[O
 C
 O
@@ -23,14 +23,14 @@ C]]>
 		<layout 
             editor:_for_="169874060404498"
             
-            id="1698740604057157" width="25" height="25" left="3" top="7.5"  style="zIndex:4;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
+            id="1698740604057157" width="25" height="25" left="3" top="3.5"  style="zIndex:4;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
 		</layout>
 		<layout 
             editor:_for_="1698740643252641"
             
-            id="1698740643252790" width="7.5" height="20" left="25" top="0"  style="zIndex:5;">
+            id="1698740643252790" width="7.5" height="20" left="30" top="4"  style="zIndex:5;">
             <text editor:_printName_="标签内容" 
-                style="fontFamily:SimHei;fontWeight:bold;fontSize:30;">
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:10;">
                 <![CDATA[<%=_data.qrcode%>]]>
             </text>
         
@@ -42,10 +42,10 @@ C]]>
 		</layout>
 		<line
                     style="lineType:dashed;lineColor:#000;"
-                    startX="38"
-                    startY="10"
-                    endX="38"
-                    endY="30"
+                    startX="50" 
+                    startY="7" 
+                    endX="50"
+                    endY="27"
                     editor:_deg_="90">
                 </line>
                 
@@ -62,9 +62,9 @@ C]]>
 		<layout 
             editor:_for_="169874440321076"
             
-            id="1698744403210405" width="5.1" height="24" left="40" top="4"  style="zIndex:9;">
+            id="1698744403210405" width="5.1" height="24" left="56" top="4"  style="zIndex:9;">
             <text  
-                style="fontFamily:黑体;fontWeight:bold;fontSize:42;align:center;valign:top;">
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:15;align:center;valign:middle;">
 <![CDATA[O
 C
 O
@@ -77,7 +77,7 @@ C]]>
 		<layout 
             editor:_for_="1699926321631581"
             
-            id="169992632163181" width="10" height="16" left="33" top="13.8"  style="zIndex:10;">
+            id="169992632163181" width="10" height="16" left="45" top="8.8"  style="zIndex:10;">
             <text  
                 style="fontFamily:SimHei;fontSize:15;align:center;valign:middle;">
                 <![CDATA[折线]]>

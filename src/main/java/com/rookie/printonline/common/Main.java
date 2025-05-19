@@ -54,7 +54,7 @@ public class Main extends Application {
 
         try {
             // 1. 解析XML模板
-            Document doc = XmlUtils.parseXmlFromResources("QR_Print_Template_100_32_2.0.xml");
+            Document doc = XmlUtils.parseXmlFromResources("QR_Print_Template_02.xml");
 
             // 2. 创建JavaFX容器
             Element page = doc.getDocumentElement();
