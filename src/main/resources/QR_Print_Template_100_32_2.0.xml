@@ -10,9 +10,9 @@
 		<layout 
             editor:_for_="169874052945135"
             
-            id="1698740529451118" width="5.1" height="24" left="39.8" top="4"  style="zIndex:3;">
+            id="1698740529451118" width="5.1" height="14" left="28.8" top="0"  style="zIndex:3;">
             <text  
-                style="fontFamily:黑体;fontWeight:bold;fontSize:15;align:center;valign:middle;">
+                style="fontFamily:黑体;fontWeight:bold;fontSize:25;align:center;valign:top;">
 <![CDATA[O
 C
 O
@@ -28,9 +28,9 @@ C]]>
 		<layout 
             editor:_for_="1698740643252641"
             
-            id="1698740643252790" width="7.5" height="20" left="30" top="4"  style="zIndex:5;">
+            id="1698740643252790" width="7.5" height="20" left="25" top="0"  style="zIndex:5;">
             <text editor:_printName_="标签内容" 
-                style="fontFamily:SimHei;fontWeight:bold;fontSize:10;">
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:25;">
                 <![CDATA[<%=_data.qrcode%>]]>
             </text>
         
