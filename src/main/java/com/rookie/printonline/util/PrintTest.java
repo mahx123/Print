@@ -4,6 +4,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -15,6 +17,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -35,6 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import static javafx.application.Application.launch;
 
 public class PrintTest implements Printable {
     /**
@@ -68,9 +73,9 @@ public class PrintTest implements Printable {
             g2.scale(scale, scale);
 
             // 绘制图片
-          //  g2.drawImage(img, 0, 0, null);
+            g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
-            renderNodeToGraphics2D(node,g2,100, 100);
+          //  renderNodeToGraphics2D(node,g2,100, 100);
             return PAGE_EXISTS;
         } catch (IOException e) {
             e.printStackTrace();
@@ -332,5 +337,11 @@ public class PrintTest implements Printable {
             System.err.println("打印失败: " + e.getMessage());
         }
     }
-
+    // 必须有一个公共无参构造器
+    public PrintTest() {
+        // 初始化代码
+    }
 }
+
+// ... 其他代码 ...
+// 新建一个单独的JavaFX应用类

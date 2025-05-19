@@ -16,7 +16,7 @@ module com.rookie.printonline {
     requires freemarker;
     requires org.dom4j;
     requires javafx.swing;
-
+    exports com.rookie.printonline.util;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
 
 }

@@ -4,6 +4,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.rookie.printonline.util.XmlUtils;
+import com.sun.javafx.print.Units;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -34,6 +35,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 
 import javax.imageio.ImageIO;
+import java.awt.print.PageFormat;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -276,7 +278,7 @@ public class Main extends Application {
             "sn", "SN-2023-001"
     );
 
-    private static final double DPI = 300; // 标准DPI
+    private static final double DPI = 72; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
     private static double getFontSize(String style) {
         String[] styles = style.split(";");
@@ -292,12 +294,16 @@ public class Main extends Application {
         return mm / MM_TO_INCH * DPI;
     }
 
-
+    // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
+    private static double mmToPoints(double mm) {
+        return mm / 25.4 * 72;
+    }
     // 修改打印方法
     private static void printJavaFXNode(Node node) {
 
         // 确保布局完成
         node.applyCss();
+        node.snapshot(null, null);
 
 
         // 延迟执行
@@ -310,7 +316,29 @@ public class Main extends Application {
             if (job != null && job.showPrintDialog(null)) {
                 // 使用HARDWARE_MINIMUM边距
 // 使用100mm×148mm的明信片规格（高度需手动限制）
-                Paper closestPaper = Paper.JAPANESE_POSTCARD;
+                // 设置自定义纸张大小(100mm x 30mm)
+                double widthMM = 120;
+                double heightMM = 60;
+                double marginMM = 2; // 2mm边距
+
+                // 创建页面格式
+                PageFormat pf = new PageFormat();
+                pf.setOrientation(PageFormat.PORTRAIT);
+
+                // 设置纸张
+                java.awt.print.Paper paper = new java.awt.print.Paper();
+                paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
+                paper.setImageableArea(
+                        mmToPoints(marginMM),
+                        mmToPoints(marginMM),
+                        mmToPoints(widthMM - 2 * marginMM),
+                        mmToPoints(heightMM - 2 * marginMM)
+                );
+                pf.setPaper(paper);
+
+
+
+                Paper closestPaper = Paper.A4;
 
                 PageLayout pageLayout = job.getPrinter().createPageLayout(
                         closestPaper,
@@ -322,12 +350,12 @@ public class Main extends Application {
                 node.getTransforms().clear();
 
                 // 计算缩放比例（确保内容适配标签纸）
-                double scaleX = mmToPx(100) / node.getBoundsInParent().getWidth();
-                double scaleY = mmToPx(30) / node.getBoundsInParent().getHeight();
-                double scale = Math.min(scaleX, scaleY);
+              //  double scaleX = mmToPx(100) / node.getBoundsInParent().getWidth();
+                //double scaleY = mmToPx(30) / node.getBoundsInParent().getHeight();
+                //double scale = Math.min(scaleX, scaleY);
 
                 // 应用缩放（保持原始比例）
-                node.getTransforms().add(new Scale(scale, scale));
+                node.getTransforms().add(new Scale(1, 1));
                 boolean success = job.printPage(pageLayout, node);
                 if (success) {
                     job.endJob();
