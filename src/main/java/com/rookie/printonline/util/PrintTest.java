@@ -12,6 +12,7 @@ import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,70 +30,78 @@ public class PrintTest implements Printable {
     public int print(Graphics gra, PageFormat pf,
                      int pageIndex)
             throws PrinterException {
-        System.out.println("pageIndex=" + pageIndex);
-        Component c = null;
-        // 转换成Graphics2D
+        if (pageIndex > 0) {
+            return NO_SUCH_PAGE;
+        }
+
         Graphics2D g2 = (Graphics2D) gra;
-        // 设置打印颜色为黑色
         g2.setColor(Color.black);
 
-        // 打印起点坐标
-        double x = pf.getImageableX();
-        double y = pf.getImageableY();
+        try {
+            BufferedImage img = ImageIO.read(new File("D:\\work_space\\Print\\456.png"));
 
-        switch (pageIndex) {
-            case 0:
-                System.out.println("x=" + x);
-                Image img = null;
-                // img = Toolkit.getDefaultToolkit().getImage("/a.jpg");
-                FileInputStream is;
-                try {
-                    is = new FileInputStream("D://image.png");
-                    BufferedImage imgs = ImageIO.read(is);
-                    img = imgs;
-                    is.close();
-                    imgs.flush();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+            // 计算缩放比例
+            double scale = Math.min(
+                    pf.getImageableWidth() / img.getWidth(),
+                    pf.getImageableHeight() / img.getHeight()
+            );
 
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+            // 应用变换
+            g2.translate(pf.getImageableX(), pf.getImageableY());
+            g2.scale(scale, scale);
 
+            // 绘制图片
+            g2.drawImage(img, 0, 0, null);
 
-                g2.drawImage(img, (int) x, (int) y, c);
-                img.flush();
-                return PAGE_EXISTS;
-            default:
-                return NO_SUCH_PAGE;
+            return PAGE_EXISTS;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return NO_SUCH_PAGE;
         }
 
     }
-
+    // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
+    private static double mmToPoints(double mm) {
+        return mm / 25.4 * 72;
+    }
     public static void main(String[] args) {
+        // 设置自定义纸张大小(100mm x 30mm)
+        double widthMM = 100;
+        double heightMM = 30;
+        double marginMM = 2; // 2mm边距
 
-        // 通俗理解就是书、文档
-        Book book = new Book(); // 设置成竖打
+        // 创建页面格式
         PageFormat pf = new PageFormat();
-        pf.setOrientation(PageFormat.PORTRAIT); // 通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
-        Paper p = new Paper();
-        p.setSize(120, 83);
-        p.setImageableArea(20, 12, 120, 83);
-        pf.setPaper(p);
-        // 把PageFormat 和 Printable 添加到书中，组成一个页面
-        book.append(new PrintTest(), pf);
-        // 获取打印服务对象
-        PrinterJob job = PrinterJob.getPrinterJob(); // 设置打印类
-        job.setPageable(book);
+        pf.setOrientation(PageFormat.PORTRAIT);
 
-        try { // 可以用printDialog显示打印对话框，在用户确认后打印；也可以直接打印
-            boolean a = job.printDialog();
-            if (a) {
+        // 设置纸张
+        Paper paper = new Paper();
+        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
+        paper.setImageableArea(
+                mmToPoints(marginMM),
+                mmToPoints(marginMM),
+                mmToPoints(widthMM - 2 * marginMM),
+                mmToPoints(heightMM - 2 * marginMM)
+        );
+        pf.setPaper(paper);
+
+        // 创建打印作业
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new PrintTest(), pf);
+
+        try {
+            // 显示打印对话框
+            if (job.printDialog()) {
+                // 重要：设置自定义纸张大小
+                job.setPrintable(new PrintTest(), pf);
+
+                System.out.println("开始打印...");
                 job.print();
+                System.out.println("打印完成");
             }
         } catch (PrinterException e) {
-            e.printStackTrace(); } }
+            System.err.println("打印失败: " + e.getMessage());
+        }
+    }
 
 }
