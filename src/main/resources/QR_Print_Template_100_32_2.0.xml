@@ -42,10 +42,10 @@ C]]>
 		</layout>
 		<line
                     style="lineType:dashed;lineColor:#000;"
-                    startX="50" 
-                    startY="7" 
-                    endX="50"
-                    endY="27"
+                    startX="38"
+                    startY="10"
+                    endX="38"
+                    endY="30"
                     editor:_deg_="90">
                 </line>
                 
@@ -77,7 +77,7 @@ C]]>
 		<layout 
             editor:_for_="1699926321631581"
             
-            id="169992632163181" width="10" height="16" left="45" top="8.8"  style="zIndex:10;">
+            id="169992632163181" width="10" height="16" left="33" top="13.8"  style="zIndex:10;">
             <text  
                 style="fontFamily:SimHei;fontSize:15;align:center;valign:middle;">
                 <![CDATA[折线]]>
