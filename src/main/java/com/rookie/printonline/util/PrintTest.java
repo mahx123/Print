@@ -73,9 +73,9 @@ public class PrintTest implements Printable {
             g2.scale(scale, scale);
 
             // 绘制图片
-            g2.drawImage(img, 0, 0, null);
+         //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
-          //  renderNodeToGraphics2D(node,g2,100, 100);
+            renderNodeToGraphics2D(node,g2,10000, 3000);
             return PAGE_EXISTS;
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class PrintTest implements Printable {
         return labelPane;
     }
 
-    private static final double DPI = 72; // 标准DPI
+    private static final double DPI = 300; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
     private  double mmToPx(double mm) {
         return mm / MM_TO_INCH * DPI;

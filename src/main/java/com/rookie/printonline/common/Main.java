@@ -278,7 +278,7 @@ public class Main extends Application {
             "sn", "SN-2023-001"
     );
 
-    private static final double DPI = 72; // 标准DPI
+    private static final double DPI = 300; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
     private static double getFontSize(String style) {
         String[] styles = style.split(";");
