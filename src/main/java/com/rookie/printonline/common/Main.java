@@ -53,7 +53,7 @@ public class Main extends Application {
 
         try {
             // 1. 解析XML模板
-            File xmlFile = new File("E://xml/QR_Print_Template_100_32_2.0.xml");
+            File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             Document doc = factory.newDocumentBuilder().parse(xmlFile);
