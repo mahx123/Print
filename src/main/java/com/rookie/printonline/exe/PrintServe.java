@@ -1,4 +1,6 @@
 package com.rookie.printonline.exe;
+import com.rookie.printonline.common.JsonUtil;
+
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import java.util.Arrays;
@@ -47,5 +49,11 @@ public class PrintServe {
         return printer.equals(defaultPrinter)
                 ? printer.getName() + " (默认)"
                 : printer.getName();
+    }
+
+    public static void main(String[] args) {
+
+        List<String> allPrint = getAllPrint();
+        System.out.println(JsonUtil.objectToJson(allPrint));
     }
 }
