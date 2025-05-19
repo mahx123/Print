@@ -3,6 +3,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.rookie.printonline.util.XmlUtils;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -53,10 +54,7 @@ public class Main extends Application {
 
         try {
             // 1. 解析XML模板
-            File xmlFile = new File("D://xml/QR_Print_Template_100_32_2.0.xml");
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            Document doc = factory.newDocumentBuilder().parse(xmlFile);
+            Document doc = XmlUtils.parseXmlFromResources("QR_Print_Template_100_32_2.0.xml");
 
             // 2. 创建JavaFX容器
             Element page = doc.getDocumentElement();

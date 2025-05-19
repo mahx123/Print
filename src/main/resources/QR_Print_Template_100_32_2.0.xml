@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page
+        xmlns="http://cloudprint.cainiao.com/print"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://cloudprint.cainiao.com/print http://cloudprint-docs-resource.oss-cn-shanghai.aliyuncs.com/lpml_schema.xsd"
+        xmlns:editor="http://cloudprint.cainiao.com/schema/editor"
+        width="100" height="32"  splitable="false" >
+		<header height="0" >
+		</header>
+		<layout 
+            editor:_for_="169874052945135"
+            
+            id="1698740529451118" width="5.1" height="24" left="39.8" top="4"  style="zIndex:3;">
+            <text  
+                style="fontFamily:黑体;fontWeight:bold;fontSize:15;align:center;valign:middle;">
+                <![CDATA[O
+C
+O
+C]]>
+            </text>
+        
+		</layout>
+		<layout 
+            editor:_for_="169874060404498"
+            
+            id="1698740604057157" width="25" height="25" left="3" top="3.5"  style="zIndex:4;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
+		</layout>
+		<layout 
+            editor:_for_="1698740643252641"
+            
+            id="1698740643252790" width="7.5" height="20" left="30" top="4"  style="zIndex:5;">
+            <text editor:_printName_="标签内容" 
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:10;">
+                <![CDATA[<%=_data.qrcode%>]]>
+            </text>
+        
+		</layout>
+		<layout 
+            editor:_for_="1698740770832549"
+            
+            id="1698740770832910" width="25" height="25" left="72" top="3.5"  style="zIndex:7;"><barcode type="qrcode" ratioMode="keepRatio"       ><![CDATA[<%=_data.qrcode%>]]></barcode>
+		</layout>
+		<line
+                    style="lineType:dashed;lineColor:#000;"
+                    startX="50" 
+                    startY="7" 
+                    endX="50"
+                    endY="27"
+                    editor:_deg_="90">
+                </line>
+                
+		<layout 
+            editor:_for_="1698744028509846"
+            
+            id="169874402850823" width="7.5" height="20" left="62.5" top="4"  style="zIndex:8;">
+            <text editor:_printName_="标签内容" 
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:10;">
+                <![CDATA[<%=_data.qrcode%>]]>
+            </text>
+        
+		</layout>
+		<layout 
+            editor:_for_="169874440321076"
+            
+            id="1698744403210405" width="5.1" height="24" left="56" top="4"  style="zIndex:9;">
+            <text  
+                style="fontFamily:SimHei;fontWeight:bold;fontSize:15;align:center;valign:middle;">
+                <![CDATA[O
+C
+O
+C]]>
+            </text>
+        
+		</layout>
+		<footer height="0" >
+		</footer>
+		<layout 
+            editor:_for_="1699926321631581"
+            
+            id="169992632163181" width="10" height="16" left="45" top="8.8"  style="zIndex:10;">
+            <text  
+                style="fontFamily:SimHei;fontSize:15;align:center;valign:middle;">
+                <![CDATA[折线]]>
+            </text>
+        
+		</layout>
+		<layout 
+            editor:_for_="170849940761519"
+            
+            id="1708499407615992" width="15" height="5" left="42" top="3"  style="zIndex:11;">
+            <text  
+                style="fontFamily:SimHei;align:center;valign:middle;">
+                <![CDATA[<%=_data.sn%>]]>
+            </text>
+        
+		</layout>
+
+</page>
