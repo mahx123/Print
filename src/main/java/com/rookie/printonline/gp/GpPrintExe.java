@@ -38,7 +38,7 @@ public class GpPrintExe {
         //配置打印机（设定对应国际代码页为 UTF-8，其他参数可参照TSPL指令）
         GbLibDll.INSTANCE.sendcommand("CODEPAGE UTF-8");
 
-        GbLibDll.INSTANCE.sendcommand("REFERENCE 0,0");
+      //  GbLibDll.INSTANCE.sendcommand("REFERENCE 0,0");
         // 3. 初始化GP指令
 //        gpCommands.append("SIZE ").append(width).append(" mm,").append(height).append(" mm\n");
 //        gpCommands.append("GAP 2 mm,0\n"); // 假设使用2mm的间隙
@@ -98,7 +98,7 @@ public class GpPrintExe {
         try {
             String gpCommands = converter.convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
 
-            GbLibDll.INSTANCE.sendcommand(gpCommands);
+           // GbLibDll.INSTANCE.sendcommand(gpCommands);
             GbLibDll.INSTANCE.closeport();
         } catch (Exception e) {
             throw new RuntimeException(e);
