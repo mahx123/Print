@@ -15,9 +15,8 @@ module com.rookie.printonline {
     requires com.google.zxing.javase;
     requires freemarker;
     requires org.dom4j;
-    requires javafx.swing;
+    requires com.sun.jna;
     exports com.rookie.printonline.util;
-    exports com.rookie.printonline.gp;
     requires usb4java;
     requires serialcom;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
