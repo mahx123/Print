@@ -14,11 +14,15 @@ import java.util.Map;
 
 public class GpXmlParseUtils {
     private TemplateData data;
+    private static final double DPI = 203; // 标准DPI
+   private static final double MM_TO_INCH = 25.4;
 
     public GpXmlParseUtils(TemplateData data) {
         this.data = data;
     }
-
+    private static double mmToPx(double mm) {
+        return mm / MM_TO_INCH * DPI;
+    }
 
     public  String convertToGPCommands(String xmlFilePath) throws Exception {
         StringBuilder gpCommands = new StringBuilder();
@@ -62,10 +66,10 @@ public class GpXmlParseUtils {
         String height = layout.getAttribute("height");
 
         // 转换为毫米到点(dot)的转换 (假设200 DPI: 1mm = 8 dots)
-        int x = (int)(Double.parseDouble(left) * 8);
-        int y = (int)(Double.parseDouble(top) * 8);
-        int w = (int)(Double.parseDouble(width) * 8);
-        int h = (int)(Double.parseDouble(height) * 8);
+        int x = (int)(mmToPx(Double.parseDouble(left)));
+        int y =(int)(mmToPx(Double.parseDouble(top)));
+        int w =(int)(mmToPx(Double.parseDouble(width)));
+        int h = (int)(mmToPx(Double.parseDouble(height)));
 
         // 检查布局中的元素类型
         NodeList children = layout.getChildNodes();
