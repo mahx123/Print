@@ -89,8 +89,8 @@ public class GpPrintExe {
 
     public static void printByXmlTemplate(){
 
-      //  TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
-        TemplateData data = new TemplateData("QR123456789", "SN987654321");
+        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
+      //  TemplateData data = new TemplateData("QR123456789", "SN987654321");
         // 2. 创建转换器
         XmlUtils converter = new XmlUtils(data);
         GbLibDll.INSTANCE.clearbuffer();
@@ -98,7 +98,7 @@ public class GpPrintExe {
         try {
             String gpCommands = converter.convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
 
-           // GbLibDll.INSTANCE.sendcommand(gpCommands);
+            GbLibDll.INSTANCE.sendcommand(gpCommands);
             GbLibDll.INSTANCE.closeport();
         } catch (Exception e) {
             throw new RuntimeException(e);
