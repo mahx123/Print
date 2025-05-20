@@ -2,7 +2,7 @@ package com.rookie.printonline.gp;
 
 import com.rookie.printonline.dto.TemplateData;
 import com.rookie.printonline.sdk.GbLibDll;
-import com.rookie.printonline.util.XmlUtils;
+import com.rookie.printonline.util.GpXmlParseUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -92,7 +92,7 @@ public class GpPrintExe {
         TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
       //  TemplateData data = new TemplateData("QR123456789", "SN987654321");
         // 2. 创建转换器
-        XmlUtils converter = new XmlUtils(data);
+        GpXmlParseUtils converter = new GpXmlParseUtils(data);
         GbLibDll.INSTANCE.clearbuffer();
         // 3. 转换XML为GP指令
         try {

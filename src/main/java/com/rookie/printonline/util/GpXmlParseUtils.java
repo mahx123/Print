@@ -8,15 +8,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.io.File;
 import org.w3c.dom.*;
-import javax.xml.parsers.*;
-import java.io.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class XmlUtils {
+public class GpXmlParseUtils {
     private TemplateData data;
 
-    public XmlUtils(TemplateData data) {
+    public GpXmlParseUtils(TemplateData data) {
         this.data = data;
     }
 
@@ -188,7 +187,7 @@ public class XmlUtils {
      */
     public  Document parseXmlFromResources(String resourcePath) throws Exception {
         // 获取资源输入流
-        InputStream inputStream = XmlUtils.class.getClassLoader()
+        InputStream inputStream = GpXmlParseUtils.class.getClassLoader()
                 .getResourceAsStream(resourcePath);
 
         if (inputStream == null) {
