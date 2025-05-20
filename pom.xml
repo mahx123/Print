@@ -107,6 +107,28 @@
             <artifactId>dom4j</artifactId>
             <version>2.1.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.serial</groupId>
+            <artifactId>serialcom</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fazecast</groupId>
+            <artifactId>jSerialComm</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.usb4java</groupId>
+            <artifactId>usb4java</artifactId>
+            <version>1.3.0</version>
+
+        </dependency>
+        <!-- 平台相关的本地库 -->
+        <dependency>
+            <groupId>org.usb4java</groupId>
+            <artifactId>usb4java-javax</artifactId>
+            <version>1.3.0</version>
+        </dependency>
     </dependencies>
 
     <build>

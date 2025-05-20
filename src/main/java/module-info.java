@@ -3,10 +3,10 @@ module com.rookie.printonline {
     requires javafx.fxml;
     exports com.rookie.printonline.common;
 
-
     opens com.rookie.printonline to javafx.fxml;
     exports com.rookie.printonline;
     requires jdk.httpserver;
+    requires com.fazecast.jSerialComm;
     requires java.desktop;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -17,6 +17,8 @@ module com.rookie.printonline {
     requires org.dom4j;
     requires javafx.swing;
     exports com.rookie.printonline.util;
+    exports com.rookie.printonline.gp;
+    requires usb4java;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
     exports com.rookie.printonline.zpl;
 

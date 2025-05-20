@@ -8,7 +8,11 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.MediaSizeName;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +63,14 @@ public class PrinterManager {
         }
         return null;
     }
-
+    public String convertZPLtoGP(String zpl) {
+        // 这里需要实现ZPL到GP指令的转换逻辑
+        // 例如替换语法差异：
+        return zpl.replace("^XA", "SIZE 100 mm,100 mm\nCLS")
+                .replace("^BQN", "QRCODE")
+                .replace("^FS", "")
+                .replace("^XZ", "PRINT 1\nEND");
+    }
     /**
      * 打印标签到本地打印机
      * @param printerName 打印机名称
@@ -81,11 +92,20 @@ public class PrinterManager {
 
         // 转换模板为ZPL指令
         String zplContent = convertTemplateToZPL(template);
-
+        zplContent= convertZPLtoGP(zplContent);
         // 准备打印作业
         DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
         Doc doc = new SimpleDoc(new ByteArrayInputStream(zplContent.getBytes(StandardCharsets.UTF_8)), flavor, null);
-
+        
+        // 3. 从 Doc 获取数据并写入文件
+//        Object docData = doc.getStreamForBytes();
+//        if (docData instanceof InputStream) {
+//            Files.copy((InputStream) docData, Paths.get("output.txt"));
+//        } else if (docData instanceof byte[]) {
+//            try (FileOutputStream fos = new FileOutputStream("output.txt")) {
+//                fos.write((byte[]) docData);
+//            }
+//        }
         // 设置打印属性
         PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
         attributes.add(new Copies(1));
