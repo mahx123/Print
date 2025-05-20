@@ -80,7 +80,7 @@ public class GpPrintExe {
 
     public static void printByXmlTemplate(){
 
-        TemplateData data = new TemplateData("QR123456789", "SN987654321");
+        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
 
         // 2. 创建转换器
         XmlUtils converter = new XmlUtils(data);
