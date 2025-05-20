@@ -47,7 +47,7 @@ public class XmlUtils {
         NodeList lines = document.getElementsByTagName("line");
         for (int i = 0; i < lines.getLength(); i++) {
             Element line = (Element) lines.item(i);
-            processLineElement(line, gpCommands);
+           // processLineElement(line, gpCommands);
         }
 
         // 6. 打印标签
@@ -76,7 +76,7 @@ public class XmlUtils {
                 Element element = (Element) child;
 
                 if (element.getTagName().equals("text")) {
-                    processTextElement(element, x, y, w, h, gpCommands);
+                   // processTextElement(element, x, y, w, h, gpCommands);
                 } else if (element.getTagName().equals("barcode")) {
                     processBarcodeElement(element, x, y, w, h, gpCommands);
                 }
