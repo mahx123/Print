@@ -83,7 +83,7 @@ public class PrintTest implements Printable {
         Pane labelPane = new Pane();
         try {
             // 1. 解析XML模板
-            Document doc = XmlUtils.parseXmlFromResources("QR_Print_Template_02.xml");
+            Document doc =null;
 
             // 2. 创建JavaFX容器
             Element page = doc.getDocumentElement();

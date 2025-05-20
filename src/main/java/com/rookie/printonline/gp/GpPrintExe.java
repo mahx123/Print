@@ -1,6 +1,8 @@
 package com.rookie.printonline.gp;
 
+import com.rookie.printonline.dto.TemplateData;
 import com.rookie.printonline.sdk.GbLibDll;
+import com.rookie.printonline.util.XmlUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -75,7 +77,25 @@ public class GpPrintExe {
 
     }
 
+
+    public static void printByXmlTemplate(){
+
+        TemplateData data = new TemplateData("QR123456789", "SN987654321");
+
+        // 2. 创建转换器
+        XmlUtils converter = new XmlUtils(data);
+
+        // 3. 转换XML为GP指令
+        try {
+            String gpCommands = converter.convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
+            GbLibDll.INSTANCE.clearbuffer();
+            GbLibDll.INSTANCE.sendcommand(gpCommands);
+            GbLibDll.INSTANCE.closeport();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void main(String[] args) {
-        testCommand();
+        printByXmlTemplate();
     }
 }
