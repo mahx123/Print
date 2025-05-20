@@ -34,14 +34,7 @@ public class XmlUtils {
         String width = page.getAttribute("width");
         String height = page.getAttribute("height");
 
-        // 3. 初始化GP指令
-        gpCommands.append("SIZE ").append(width).append(" mm,").append(height).append(" mm\n");
-        gpCommands.append("GAP 2 mm,0\n"); // 假设使用2mm的间隙
-        gpCommands.append("CLS\n");
-        gpCommands.append("DENSITY 8\n"); // 中等打印浓度
-        gpCommands.append("SPEED 3\n"); // 中等打印速度
-        gpCommands.append("DIRECTION 0\n"); // 打印方向
-        gpCommands.append("REFERENCE 0,0\n"); // 参考坐标原点
+
 
         // 4. 处理所有布局元素
         NodeList layouts = document.getElementsByTagName("layout");
