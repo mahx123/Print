@@ -11,8 +11,8 @@ import com.sun.jna.Native;
  *@Version: V1.0.0
  *@Copyright: 菜鸟
  */
-public interface GbLibDll {
-    GbLibDll INSTANCE = (GbLibDll) Native.loadLibrary("\\TSCLIB", GbLibDll.class);
+public interface GbLibDll extends Library{
+    GbLibDll INSTANCE = (GbLibDll) Native.loadLibrary("TSCLIB", GbLibDll.class);
     int about ();
     //指定计算机端的输出端口（1.单机打印时，请指定打印机驱动程序名称，例如: TSC CLEVER TTP-243  2.若连接打印机服务器，请指定服务器路径及共享打印机名称，例如: \\SERVER\TTP243  3.USB）
     int openport (String pirnterName);

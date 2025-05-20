@@ -16,6 +16,7 @@ module com.rookie.printonline {
     requires freemarker;
     requires org.dom4j;
     requires com.sun.jna;
+    requires javafx.swing; // 新增依赖
     exports com.rookie.printonline.util;
     requires usb4java;
     requires serialcom;

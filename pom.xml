@@ -135,10 +135,16 @@
             <artifactId>jna</artifactId>
             <version>5.12.1</version> <!-- 使用最新稳定版本 -->
         </dependency>
+
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
             <version>5.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>17.0.2</version> <!-- 根据你的JavaFX版本调整 -->
         </dependency>
     </dependencies>
 
