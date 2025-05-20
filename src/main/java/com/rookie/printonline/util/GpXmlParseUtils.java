@@ -50,7 +50,7 @@ public class GpXmlParseUtils {
         NodeList lines = document.getElementsByTagName("line");
         for (int i = 0; i < lines.getLength(); i++) {
             Element line = (Element) lines.item(i);
-           // processLineElement(line, gpCommands);
+            processLineElement(line, gpCommands);
         }
 
         // 6. 打印标签
@@ -79,7 +79,7 @@ public class GpXmlParseUtils {
                 Element element = (Element) child;
 
                 if (element.getTagName().equals("text")) {
-                   // processTextElement(element, x, y, w, h, gpCommands);
+                    processTextElement(element, x, y, w, h, gpCommands);
                 } else if (element.getTagName().equals("barcode")) {
                     processBarcodeElement(element, x, y, w, h, gpCommands);
                 }
@@ -94,10 +94,10 @@ public class GpXmlParseUtils {
         String endY = lineElement.getAttribute("endY");
 
         // 转换为点(dot)
-        int x1 = (int)(Double.parseDouble(startX) * 8);
-        int y1 = (int)(Double.parseDouble(startY) * 8);
-        int x2 = (int)(Double.parseDouble(endX) * 8);
-        int y2 = (int)(Double.parseDouble(endY) * 8);
+        int x1 = (int)(mmToPx(Double.parseDouble(startX)));
+        int y1 = (int)(mmToPx(Double.parseDouble(startY)));
+        int x2 = (int)(mmToPx(Double.parseDouble(endX)));
+        int y2 =(int)(mmToPx(Double.parseDouble(endY)));
 
         // 线条粗细
         int thickness = 2; // 默认2点
