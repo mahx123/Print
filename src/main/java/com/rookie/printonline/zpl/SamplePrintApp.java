@@ -1,5 +1,9 @@
-package com.rookie.printonline.common;
+package com.rookie.printonline.zpl;
 
+
+import com.rookie.printonline.common.JsonUtil;
+
+import java.util.List;
 
 /**
  * 打印示例应用，展示如何配置打印机并打印标签
@@ -7,8 +11,16 @@ package com.rookie.printonline.common;
 public class SamplePrintApp {
     public static void main(String[] args) {
         try {
+
+            // 获取所有可用的打印机名称
+            PrinterManager printerManager2 = PrinterManager.getInstance();
+            List<PrinterConfig> allPrinterConfigs = printerManager2.getAllPrinterConfigs();
+            System.out.println("可用打印机列表：");
+            for (PrinterConfig name : allPrinterConfigs) {
+                System.out.println(JsonUtil.objectToJson(name));
+            }
             // 1. 配置打印机
-            PrinterConfig printerConfig = new PrinterConfig("TSC TTP-244 Pro", "热敏打印机");
+            PrinterConfig printerConfig = new PrinterConfig("Gprinter GP-1324D", "热敏打印机");
             printerConfig.setDpi(300); // 设置DPI为300
             printerConfig.addExtraParam("printSpeed", 4); // 设置打印速度(英寸/秒)
             printerConfig.addExtraParam("darkness", 15); // 设置打印浓度(0-30)
@@ -25,7 +37,7 @@ public class SamplePrintApp {
             );
 
             // 4. 执行打印
-            PrintResult result = printerManager.printLabel("TSC TTP-244 Pro", template);
+            PrintResult result = printerManager.printLabel("Gprinter GP-1324D", template);
 
             // 5. 处理打印结果
             if (result.isSuccess()) {

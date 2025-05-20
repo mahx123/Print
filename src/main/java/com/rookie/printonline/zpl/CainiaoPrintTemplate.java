@@ -1,4 +1,4 @@
-package com.rookie.printonline.common;
+package com.rookie.printonline.zpl;
 
 
 import java.util.HashMap;

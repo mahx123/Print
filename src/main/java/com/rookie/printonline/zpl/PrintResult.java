@@ -1,4 +1,4 @@
-package com.rookie.printonline.common;
+package com.rookie.printonline.zpl;
 
 /**
  * 打印结果类，封装API返回结果

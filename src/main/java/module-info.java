@@ -18,5 +18,6 @@ module com.rookie.printonline {
     requires javafx.swing;
     exports com.rookie.printonline.util;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
+    exports com.rookie.printonline.zpl;
 
 }
