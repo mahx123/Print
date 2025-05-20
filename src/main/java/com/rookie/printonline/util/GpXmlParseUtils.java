@@ -15,7 +15,7 @@ import java.util.Map;
 public class GpXmlParseUtils {
     private TemplateData data;
     private static final double DPI = 203; // 标准DPI
-   private static final double MM_TO_INCH = 25.4;
+    private static final double MM_TO_INCH = 25.4;
 
     public GpXmlParseUtils(TemplateData data) {
         this.data = data;
@@ -135,13 +135,16 @@ public class GpXmlParseUtils {
     }
     private  void processTextElement(Element textElement, int x, int y, int w, int h, StringBuilder gpCommands) {
         // 获取文本内容
+        // 获取文本内容
         String content = textElement.getTextContent().trim();
 
         // 替换模板变量
         if (content.contains("<%=_data.qrcode%>")) {
             content = content.replace("<%=_data.qrcode%>", data.getQrcode());
+            System.out.println("Text content after replacement: " + content); // 添加日志
         } else if (content.contains("<%=_data.sn%>")) {
             content = content.replace("<%=_data.sn%>", data.getSn());
+            System.out.println("Text content after replacement: " + content); // 添加日志
         }
 
         // 处理多行文本
