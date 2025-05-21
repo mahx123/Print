@@ -14,12 +14,12 @@ public class SamplePrintApp {
 //            printerConfig.addExtraParam("darkness", 15); // 设置打印浓度(0-30)
 
 //            // 1. 配置佳博打印机
-            PrinterConfig printerConfig = new PrinterConfig("Gprinter GP-1324D", "佳博热敏打印机");
+            PrinterConfig printerConfig = new PrinterConfig("ZDesigner GT800-300dpi EPL", "ZPL");
             printerConfig.setDpi(203); // 设置DPI
-//            printerConfig.addExtraParam("labelWidth", 100); // 标签宽度(mm)
-//            printerConfig.addExtraParam("labelHeight", 32); // 标签高度(mm)
-//            printerConfig.addExtraParam("qrSize", 10); // 二维码大小
-//            printerConfig.addExtraParam("fontSize", 5); // 字体大小
+            printerConfig.addExtraParam("labelWidth", 100); // 标签宽度(mm)
+            printerConfig.addExtraParam("labelHeight", 32); // 标签高度(mm)
+            printerConfig.addExtraParam("qrSize", 10); // 二维码大小
+            printerConfig.addExtraParam("fontSize", 5); // 字体大小
 
             // 2. 添加打印机配置到管理器
             PrinterManager printerManager = PrinterManager.getInstance();
@@ -34,7 +34,7 @@ public class SamplePrintApp {
 
             // 4. 执行打印
          //   PrintResult result = printerManager.printLabel("TSC TTP-244 Pro", template);
-            PrintResult result = printerManager.printLabel("Gprinter GP-1324D", template);
+            PrintResult result = printerManager.printLabel("ZDesigner GT800-300dpi EPL", template);
 
             // 5. 处理打印结果
             if (result.isSuccess()) {

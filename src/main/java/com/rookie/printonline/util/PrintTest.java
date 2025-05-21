@@ -297,12 +297,12 @@ public class PrintTest implements Printable {
     }
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
     private static double mmToPoints(double mm) {
-        return mm / 25.4 * 72;
+        return mm / 25.4 * 300;
     }
     public static void main(String[] args) {
         // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 120;
-        double heightMM = 60;
+        double widthMM = 100;
+        double heightMM = 30;
         double marginMM = 2; // 2mm边距
 
         // 创建页面格式

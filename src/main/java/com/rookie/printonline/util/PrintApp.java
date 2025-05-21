@@ -13,7 +13,7 @@ public class PrintApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 80;
+        double widthMM = 100;
         double heightMM = 30;
         double marginMM = 2; // 2mm边距
 
@@ -52,7 +52,7 @@ public class PrintApp extends Application {
     }
 
     private static double mmToPoints(double mm) {
-        return mm / 25.4 * 203;
+        return mm / 25.4 * 300;
     }
 
     public static void main(String[] args) {
