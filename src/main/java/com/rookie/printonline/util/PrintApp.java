@@ -52,7 +52,7 @@ public class PrintApp extends Application {
     }
 
     private static double mmToPoints(double mm) {
-        return mm / 25.4 * 300;
+        return mm / 25.4 * 203;
     }
 
     public static void main(String[] args) {

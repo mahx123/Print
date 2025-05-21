@@ -19,12 +19,18 @@ import java.nio.charset.StandardCharsets;
 public class GpPrintExe {
     
     static {
+        //   printByTemplate();
+        // 设置纸张大小和边距（单位：点，1mm≈8点）
         System.setProperty("jna.encoding", "GBK");
+
+        //TSCLIB_DLL.about();(接口相关)
+        //调用查询打印机接口（ 0 = 待机, 1 = 开盖, 16 = 暂停, 返回值参照TSPL的<ESC>!?指令）
         byte status = GbLibDll.INSTANCE.usbportqueryprinter();
         System.out.println(status);
+        //连接打印机（单机打印，输入打印机驱动名称）
         GbLibDll.INSTANCE.openport("Gprinter GP-1324D");
         //配置打印机（设定卷标纸宽度为60mm，高度为40mm，此为实际纸卷宽高）
-        GbLibDll.INSTANCE.sendcommand("SIZE 100 mm, 30 mm");
+        GbLibDll.INSTANCE.sendcommand("SIZE 80 mm, 30 mm");
         //配置打印机（设定卷标纸间隔为2mm）
         GbLibDll.INSTANCE.sendcommand("GAP 0 mm");
         //配置打印机（设定打印机速度为4）
@@ -37,8 +43,16 @@ public class GpPrintExe {
         GbLibDll.INSTANCE.sendcommand("SET TEAR ON");
         //配置打印机（设定对应国际代码页为 UTF-8，其他参数可参照TSPL指令）
         GbLibDll.INSTANCE.sendcommand("CODEPAGE UTF-8");
+        //清楚缓存数据（等同于CLS）
+        GbLibDll.INSTANCE.clearbuffer();
+       // GbLibDll.INSTANCE.sendcommand("REFERENCE 10,0");
+        //下载文件UL.PCX
+        // TscLibDll.INSTANCE.downloadpcx("C:/Users/Yzm/Desktop/佳博文档/[售前考核]上位机开发对接/TscJava_examine/lib/UL.PCX", "UL.PCX");
+        //TscLibDll.INSTANCE.downloadpcx("C:\\Users\\Yzm\\Desktop\\佳博文档\\位图打印培训ppt使用的图片\\GPRINTER.BMP", "GPRINTER.BMP");
 
-       GbLibDll.INSTANCE.sendcommand("REFERENCE 10,0");
+        //打印指令，打印PCX文件
+     //   GbLibDll.INSTANCE.sendcommand("PUTPCX 40,40,\"UL.PCX\"");
+      //  GbLibDll.INSTANCE.sendcommand("PUTBMP 40,40,\"GPRINTER.BMP\"");
         // 3. 初始化GP指令
 //        gpCommands.append("SIZE ").append(width).append(" mm,").append(height).append(" mm\n");
 //        gpCommands.append("GAP 2 mm,0\n"); // 假设使用2mm的间隙
@@ -104,7 +118,10 @@ public class GpPrintExe {
             throw new RuntimeException(e);
         }
     }
+    public static void init(){
 
+
+    }
 
     public static void printByTemplate(){
 
@@ -116,8 +133,8 @@ public class GpPrintExe {
         // 3. 转换XML为GP指令
         try {
 
-            String s = new GpXmlParseUtils(data).convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
-            GbLibDll.INSTANCE.sendcommand(s);
+            String strings = new GpXmlParseUtils(data).convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
+            GbLibDll.INSTANCE.sendcommand(strings);
             GbLibDll.INSTANCE.closeport();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -126,6 +143,25 @@ public class GpPrintExe {
     public static void main(String[] args) {
 
 
+
         printByTemplate();
+        //使用Windows TTF字型打印文字（x坐标，y坐标，字体高度，旋转角度，字体外形，下划线，字体名称，内容）
+//        GbLibDll.INSTANCE.windowsfont(160, 20, 48, 0, 0, 0, "Arial", "Hello World");
+//        //打印文本内容
+//        GbLibDll.INSTANCE.printerfont("136", "80", "TSS24.BF2", "0", "0", "0", "蝶恋花·庭院深深深几许");
+//        //使用Windows TTF字型打印固定长度的Unicode文字（x坐标，y坐标，字体高度，旋转角度，字体外形，下划线，字体名称，内容，长度）
+//        GbLibDll.INSTANCE.windowsfontUnicodeLengh(224, 110, 24, 0, 0, 0, "Arial", result_unicode,word_unicode.length());
+////
+//////        //打印binary（二进制）文件
+//        GbLibDll.INSTANCE.sendBinaryData(result_utf8, result_utf8.length);
+//
+//        //打印条码
+////        TscLibDll.INSTANCE.barcode("140", "200", "128", "80", "0", "0", "2", "2", "2023040130309");
+//        //打印二维码（x坐标，y坐标，纠错等级，二维码宽度，手动/自动编码，旋转角度，条码内容）
+      //  GbLibDll.INSTANCE.sendcommand("QRCODE 160,150,M,5,A,0,\"https://baike.baidu.com/item/%E8%9D%B6%E6%81%8B%E8%8A%B1%C2%B7%E5%BA%AD%E9%99%A2%E6%B7%B1%E6%B7%B1%E6%B7%B1%E5%87%A0%E8%AE%B8/3048988?fr=aladdin\"");
+//        //打印指令（1式1份）
+       // GbLibDll.INSTANCE.printlabel("1", "1");
+//        //断开端口
+        GbLibDll.INSTANCE.closeport();
     }
 }
