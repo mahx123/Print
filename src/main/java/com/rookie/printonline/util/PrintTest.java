@@ -165,7 +165,7 @@ public class PrintTest implements Printable {
         if (barcodes.getLength() > 0) {
             Element barcode = (Element) barcodes.item(0);
             if ("qrcode".equals(barcode.getAttribute("type"))) {
-                String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode"));
+                String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
                 qrCode.setLayoutX(mmToPx(left));
                 qrCode.setLayoutY(mmToPx(top));
@@ -182,7 +182,7 @@ public class PrintTest implements Printable {
             Element text = (Element) texts.item(0);
             String content = text.getTextContent()
                     .replace("<%=_data.qrcode%>", DATA.get("qrcode"))
-                    .replace("<%=_data.sn%>", DATA.get("sn"));
+                    .replace("<%=_data.sn%>", DATA.get("sn")).trim();
 
             Text textNode = new Text(content);
 
@@ -191,11 +191,12 @@ public class PrintTest implements Printable {
 
             // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(mmToPx(left));
-            textNode.setLayoutY(mmToPx(top+2));
+            System.out.println("content:"+content+",top："+top);
+            textNode.setLayoutY(mmToPx(top));
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+               // textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
