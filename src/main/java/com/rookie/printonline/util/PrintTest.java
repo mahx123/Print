@@ -247,6 +247,25 @@ public class PrintTest implements Printable {
         }
         return styleMap;
     }
+    // 标准 DPI 值，可根据实际情况调整
+
+    /**
+     * 将像素转换为毫米
+     * @param px 像素值
+     * @return 对应的毫米值
+     */
+    public static double pxToMm(double px) {
+        return px / DPI * 25.4;
+    }
+    private double mmToPoints(double mm) {
+        return mm / 25.4 * 72; // 1英寸=72点
+    }
+    /**
+     * 将毫米转换为像素
+     * @param mm 毫米值
+     * @return 对应的像素值
+     */
+
     private  void applyTextStyle(Text text, String style) {
         String[] styles = style.split(";");
         for (String s : styles) {
@@ -258,7 +277,11 @@ public class PrintTest implements Printable {
                     text.setFont(Font.font(kv[1], text.getFont().getSize()));
                     break;
                 case "fontSize":
-                    text.setFont(Font.font(text.getFont().getFamily(), Double.parseDouble(kv[1])));
+                  //  text.setFont(Font.font(text.getFont().getFamily(), Double.parseDouble(kv[1])));
+                    double v = Double.parseDouble(kv[1]);
+                    double v2 = mmToPoints(v);
+                    double v1 = pxToMm( Double.parseDouble(kv[1]));
+                    text.setFont(Font.font(text.getFont().getFamily(),mmToPoints(v)));
                     break;
                 case "fontWeight":
                     if ("bold".equals(kv[1])) {
@@ -266,8 +289,9 @@ public class PrintTest implements Printable {
                     }
                 case "align":
                     if ("center".equals(kv[1].trim())) {
-                        //  text.setTextAlignment(TextAlignment.CENTER);
+                        text.setTextAlignment(TextAlignment.CENTER);
                     }
+                    break;
                 case "valign":
                     if ("center".equals(kv[1].trim())) {
                         text.setTextAlignment(TextAlignment.CENTER);
@@ -318,9 +342,7 @@ public class PrintTest implements Printable {
         g2d.drawImage(bufferedImage, 0, 0, null);
     }
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
-    private static double mmToPoints(double mm) {
-        return mm / 25.4 * 300;
-    }
+  
     public static void main(String[] args) {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
@@ -333,13 +355,13 @@ public class PrintTest implements Printable {
 
         // 设置纸张
         Paper paper = new Paper();
-        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
-        paper.setImageableArea(
-                mmToPoints(marginMM),
-                mmToPoints(marginMM),
-                mmToPoints(widthMM - 2 * marginMM),
-                mmToPoints(heightMM - 2 * marginMM)
-        );
+//        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
+//        paper.setImageableArea(
+//                mmToPoints(marginMM),
+//                mmToPoints(marginMM),
+//                mmToPoints(widthMM - 2 * marginMM),
+//                mmToPoints(heightMM - 2 * marginMM)
+//        );
         pf.setPaper(paper);
 
         // 创建打印作业
