@@ -89,10 +89,10 @@ public class GpPrintExe {
 
     public static void printByXmlTemplate(String cmd){
 
-//        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
-//        //TemplateData data = new TemplateData("QR123456789", "SN987654321");
+        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
+       //TemplateData data = new TemplateData("QR123456789", "SN987654321");
 //        // 2. 创建转换器
-//        GpXmlParseUtils converter = new GpXmlParseUtils(data);
+        GpXmlParseUtils converter = new GpXmlParseUtils(data);
         GbLibDll.INSTANCE.clearbuffer();
         // 3. 转换XML为GP指令
         try {
@@ -104,7 +104,28 @@ public class GpPrintExe {
             throw new RuntimeException(e);
         }
     }
+
+
+    public static void printByTemplate(){
+
+        //TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
+        TemplateData data = new TemplateData("QR123456789", "SN987654321");
+//        // 2. 创建转换器
+     //   GpXmlParseUtils converter = new GpXmlParseUtils(data);
+        GbLibDll.INSTANCE.clearbuffer();
+        // 3. 转换XML为GP指令
+        try {
+
+            String s = new GpXmlParseUtils(data).convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
+            GbLibDll.INSTANCE.sendcommand(s);
+            GbLibDll.INSTANCE.closeport();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void main(String[] args) {
-        testCommand();
+
+
+        printByTemplate();
     }
 }

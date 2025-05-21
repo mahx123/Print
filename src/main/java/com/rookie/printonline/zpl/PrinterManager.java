@@ -102,24 +102,24 @@ public class PrinterManager {
         attributes.add(new Copies(1));
 
         // 创建并执行打印作业
-        DocPrintJob job = printService.createPrintJob();
-        try {
-            job.print(doc, attributes);
-            return createSuccessResult(printContent);
-        } catch (PrintException e) {
-            return createErrorResult("打印失败: " + e.getMessage());
-        }
-//        GbLibDll.INSTANCE.clearbuffer();
-//        // 3. 转换XML为GP指令
+//        DocPrintJob job = printService.createPrintJob();
 //        try {
-//            String gpCommands = printContent;
-//
-//            GpPrintExe.printByXmlTemplate(gpCommands);
-//            GbLibDll.INSTANCE.closeport();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
+//            job.print(doc, attributes);
+//            return createSuccessResult(printContent);
+//        } catch (PrintException e) {
+//            return createErrorResult("打印失败: " + e.getMessage());
 //        }
-      //  return null;
+        GbLibDll.INSTANCE.clearbuffer();
+        // 3. 转换XML为GP指令
+        try {
+            String gpCommands = printContent;
+
+            GpPrintExe.printByXmlTemplate(gpCommands);
+            GbLibDll.INSTANCE.closeport();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     /**
