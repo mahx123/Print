@@ -23,14 +23,15 @@ public class PrintApp extends Application {
 
         // 设置纸张
         Paper paper = new Paper();
-        double size_x= mmToPoints(widthMM);
-        double size_y= mmToPoints(heightMM);
-        paper.setSize(300, 100);
+        paper.setSize(300, 80);
+        double x= mmToPoints(marginMM);
+        double y= mmToPoints(marginMM);
+        System.out.println("x:"+x);
         paper.setImageableArea(
-                mmToPoints(marginMM),
-                mmToPoints(marginMM),
-                300,
-                100
+                x,
+                x,
+                200,
+                60
         );
         pf.setPaper(paper);
 
