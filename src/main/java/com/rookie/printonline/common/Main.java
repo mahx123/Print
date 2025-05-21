@@ -3,6 +3,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.rookie.printonline.util.PrintTest;
 import com.rookie.printonline.util.XmlUtils;
 
 import javafx.animation.PauseTransition;
@@ -82,7 +83,8 @@ public class Main extends Application {
             Scene scene = new Scene(new Group(labelPane));
             primaryStage.setScene(scene);
             //primaryStage.show();
-            saveNodeAsImage(labelPane, "456.png");
+            //saveNodeAsImage(labelPane, "456.png");
+            PrintTest.saveNodeAsImage(labelPane,"456.png");
             // 5. 延迟打印以确保渲染完成
             PauseTransition delay = new PauseTransition(Duration.millis(400));
             delay.setOnFinished(event -> printJavaFXNode(labelPane));

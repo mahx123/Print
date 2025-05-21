@@ -64,14 +64,23 @@ public class PrintTest implements Printable {
         try {
 
 
-            // 应用变换
-            g2.translate(pf.getImageableX(), pf.getImageableY());
-            g2.scale(1, 1);
+
+
 
             // 绘制图片
          //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
             saveNodeAsImage(node, "456.png");
+            BufferedImage img = ImageIO.read(new File("456.png"));
+            // 计算缩放比例
+            double scale = Math.min(
+                    pf.getImageableWidth() / img.getWidth(),
+                    pf.getImageableHeight() / img.getHeight()
+            );
+
+            // 应用变换
+            g2.translate(pf.getImageableX(), pf.getImageableY());
+            g2.scale(scale, scale);
           //  System.out.println("=============");
             renderNodeToGraphics2D(node,g2,10000, 3000);
             return PAGE_EXISTS;
@@ -83,7 +92,7 @@ public class PrintTest implements Printable {
 
     }
 
-    private static void saveNodeAsImage(Node node, String filePath) {
+    public static void saveNodeAsImage(Node node, String filePath) {
         // 1. 确保节点已正确渲染（可能需要临时添加到 Scene）
         Scene scene = new Scene(new Group(node));
 

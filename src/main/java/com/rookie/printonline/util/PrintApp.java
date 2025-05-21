@@ -13,7 +13,7 @@ public class PrintApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 100;
+        double widthMM = 120;
         double heightMM = 30;
         double marginMM = 2; // 2mm边距
 
@@ -44,7 +44,7 @@ public class PrintApp extends Application {
                 job.print();
                 System.out.println("打印完成");
             }
-        } catch (PrinterException e) {
+        } catch (Exception e) {
             System.err.println("打印失败: " + e.getMessage());
         } finally {
             Platform.exit(); // 打印完成后退出应用
