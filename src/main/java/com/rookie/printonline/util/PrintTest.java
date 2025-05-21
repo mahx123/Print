@@ -7,7 +7,9 @@ import com.google.zxing.common.BitMatrix;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,21 +62,17 @@ public class PrintTest implements Printable {
         g2.setColor(Color.black);
 
         try {
-            BufferedImage img = ImageIO.read(new File("D:\\work_space\\Print\\456.png"));
 
-            // 计算缩放比例
-            double scale = Math.min(
-                    pf.getImageableWidth() / img.getWidth(),
-                    pf.getImageableHeight() / img.getHeight()
-            );
 
             // 应用变换
             g2.translate(pf.getImageableX(), pf.getImageableY());
-            g2.scale(scale, scale);
+            g2.scale(0.18, 0.18);
 
             // 绘制图片
          //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
+            saveNodeAsImage(node, "456.png");
+            System.out.println("=============");
             renderNodeToGraphics2D(node,g2,10000, 3000);
             return PAGE_EXISTS;
         } catch (Exception e) {
@@ -85,6 +83,30 @@ public class PrintTest implements Printable {
 
     }
 
+    private static void saveNodeAsImage(Node node, String filePath) {
+        // 1. 确保节点已正确渲染（可能需要临时添加到 Scene）
+        Scene scene = new Scene(new Group(node));
+
+        // 2. 创建 WritableImage 并捕获节点内容
+        WritableImage image = new WritableImage(
+                (int) node.getBoundsInParent().getWidth(),
+                (int) node.getBoundsInParent().getHeight()
+        );
+        node.snapshot(null, image);
+
+        // 3. 保存为 PNG 文件
+        File file = new File(filePath);
+        try {
+            ImageIO.write(
+                    SwingFXUtils.fromFXImage(image, null),
+                    "png",
+                    file
+            );
+            System.out.println("图片已保存到: " + file.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("保存图片失败: " + e.getMessage());
+        }
+    }
     private Node parseXmlToNode(){
         Pane labelPane = new Pane();
         try {
