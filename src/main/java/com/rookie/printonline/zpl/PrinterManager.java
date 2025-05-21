@@ -2,17 +2,16 @@ package com.rookie.printonline.zpl;
 
 //import com.alibaba.fastjson.JSON;
 
+import com.rookie.printonline.gp.GpPrintExe;
+import com.rookie.printonline.sdk.GbLibDll;
+
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
-import javax.print.attribute.standard.MediaSizeName;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,14 +62,7 @@ public class PrinterManager {
         }
         return null;
     }
-    public String convertZPLtoGP(String zpl) {
-        // 这里需要实现ZPL到GP指令的转换逻辑
-        // 例如替换语法差异：
-        return zpl.replace("^XA", "SIZE 100 mm,100 mm\nCLS")
-                .replace("^BQN", "QRCODE")
-                .replace("^FS", "")
-                .replace("^XZ", "PRINT 1\nEND");
-    }
+
     /**
      * 打印标签到本地打印机
      * @param printerName 打印机名称
@@ -90,40 +82,44 @@ public class PrinterManager {
             throw new PrintException("未找到本地打印机: " + printerName);
         }
 
-        // 转换模板为ZPL指令
-        String zplContent = convertTemplateToZPL(template);
-        zplContent= convertZPLtoGP(zplContent);
+        // 根据打印机类型生成相应的打印指令
+        String printerType = config.getPrinterType().toLowerCase();
+        String printContent;
+
+        if (printerType.contains("tsc") || printerType.contains("佳博")) {
+            printContent = convertTemplateToTSC(template, config);
+        } else {
+            // 默认使用ZPL
+            printContent = convertTemplateToZPL(template, config);
+        }
+
         // 准备打印作业
         DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
-        Doc doc = new SimpleDoc(new ByteArrayInputStream(zplContent.getBytes(StandardCharsets.UTF_8)), flavor, null);
-        
-        // 3. 从 Doc 获取数据并写入文件
-//        Object docData = doc.getStreamForBytes();
-//        if (docData instanceof InputStream) {
-//            Files.copy((InputStream) docData, Paths.get("output.txt"));
-//        } else if (docData instanceof byte[]) {
-//            try (FileOutputStream fos = new FileOutputStream("output.txt")) {
-//                fos.write((byte[]) docData);
-//            }
-//        }
+        Doc doc = new SimpleDoc(new ByteArrayInputStream(printContent.getBytes(StandardCharsets.UTF_8)), flavor, null);
+
         // 设置打印属性
         PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
         attributes.add(new Copies(1));
-
-        // 如果配置了媒体尺寸，添加到打印属性中
-        if (config.getExtraParams().containsKey("mediaSize")) {
-            MediaSizeName mediaSize = (MediaSizeName) config.getExtraParams().get("mediaSize");
-            attributes.add(mediaSize);
-        }
 
         // 创建并执行打印作业
         DocPrintJob job = printService.createPrintJob();
         try {
             job.print(doc, attributes);
-            return createSuccessResult(zplContent);
+            return createSuccessResult(printContent);
         } catch (PrintException e) {
             return createErrorResult("打印失败: " + e.getMessage());
         }
+//        GbLibDll.INSTANCE.clearbuffer();
+//        // 3. 转换XML为GP指令
+//        try {
+//            String gpCommands = printContent;
+//
+//            GpPrintExe.printByXmlTemplate(gpCommands);
+//            GbLibDll.INSTANCE.closeport();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+      //  return null;
     }
 
     /**
@@ -142,32 +138,107 @@ public class PrinterManager {
     }
 
     /**
-     * 将模板转换为ZPL指令
+     * 将模板转换为TSC指令 (适用于佳博打印机)
      * @param template 打印模板
-     * @return ZPL指令字符串
+     * @param config 打印机配置
+     * @return TSC指令字符串
      */
-    private String convertTemplateToZPL(CainiaoPrintTemplate template) {
-        // 这里应该实现从菜鸟模板到ZPL的转换
-        // 简化示例，实际实现需要根据模板内容生成对应的ZPL指令
+    private String convertTemplateToTSC(CainiaoPrintTemplate template, PrinterConfig config) {
+        StringBuilder tsc = new StringBuilder();
 
-        StringBuilder zpl = new StringBuilder();
-        zpl.append("^XA^LH0,0^FO50,50^BQN,2,10^FDQA,");
+        // 获取打印机配置参数
+        int width = (int) config.getExtraParams().getOrDefault("labelWidth", 100);  // 标签宽度，单位mm
+        int height = (int) config.getExtraParams().getOrDefault("labelHeight", 32);  // 标签高度，单位mm
+        int dpi = config.getDpi();
 
-        // 添加二维码数据
+        // 初始化打印机
+        tsc.append("SIZE ").append(width).append(" mm,").append(height).append(" mm\r\n");
+        tsc.append("GAP 2 mm, 0 mm\r\n");
+        tsc.append("DIRECTION 1\r\n");
+        tsc.append("REFERENCE 0,0\r\n");
+        tsc.append("CLS\r\n");
+
+        // 添加二维码
         String qrcodeData = (String) template.getTemplateData().get("qrcode");
-        zpl.append(qrcodeData).append("^FS");
+        int qrSize = (int) config.getExtraParams().getOrDefault("qrSize", 5);  // 二维码大小
+
+        // 左侧二维码
+        tsc.append("QRCODE 20,20,L,").append(qrSize).append(",A,0,M2,S7,\"").append(qrcodeData).append("\"\r\n");
+
+        // 右侧二维码
+        tsc.append("QRCODE ").append(width - 40).append(",20,L,").append(qrSize).append(",A,0,M2,S7,\"").append(qrcodeData).append("\"\r\n");
 
         // 添加文本
-        zpl.append("^FO200,50^A0N,25,25^FD").append(qrcodeData).append("^FS");
+        int fontSize = (int) config.getExtraParams().getOrDefault("fontSize", 4);  // 字体大小
+
+        // 左侧文本
+        tsc.append("TEXT 60,30,\"TSS24.BF2\",0,1,1,\"").append(qrcodeData).append("\"\r\n");
+
+        // 右侧文本
+        tsc.append("TEXT ").append(width - 75).append(",30,\"TSS24.BF2\",0,1,1,\"").append(qrcodeData).append("\"\r\n");
 
         // 添加OCOC文本
-        zpl.append("^FO300,50^A0N,30,30^FDOCOC^FS");
+        tsc.append("TEXT ").append(width/2 - 30).append(",20,\"TSS24.BF2\",0,2,2,\"OCOC\"\r\n");
 
         // 添加序列号
         String sn = (String) template.getTemplateData().get("sn");
-        zpl.append("^FO150,10^A0N,20,20^FD").append(sn).append("^FS");
+        tsc.append("TEXT ").append(width/2 - 20).append(",5,\"TSS24.BF2\",0,1,1,\"").append(sn).append("\"\r\n");
 
+        // 添加中间分隔线
+        tsc.append("BAR ").append(width/2).append(",15,").append(width/2).append(",").append(height - 15).append(",2\r\n");
+
+        // 打印
+        tsc.append("PRINT 1\r\n");
+
+        return tsc.toString();
+    }
+
+    /**
+     * 将模板转换为ZPL指令
+     * @param template 打印模板
+     * @param config 打印机配置
+     * @return ZPL指令字符串
+     */
+    private String convertTemplateToZPL(CainiaoPrintTemplate template, PrinterConfig config) {
+        // 保留原有的ZPL转换逻辑，用于非佳博打印机
+        StringBuilder zpl = new StringBuilder();
+
+        // 获取打印机配置参数
+        int width = (int) config.getExtraParams().getOrDefault("labelWidth", 4);  // 标签宽度，单位英寸
+        int height = (int) config.getExtraParams().getOrDefault("labelHeight", 1.26);  // 标签高度，单位英寸
+
+        // 初始化打印机
+        zpl.append("^XA^LH0,0");
+
+        // 添加二维码
+        String qrcodeData = (String) template.getTemplateData().get("qrcode");
+
+        // 左侧二维码
+        zpl.append("^FO50,20^BQN,2,10^FDQA,").append(qrcodeData).append("^FS");
+
+        // 右侧二维码
+        zpl.append("^FO").append(width * 200 - 100).append(",20^BQN,2,10^FDQA,").append(qrcodeData).append("^FS");
+
+        // 添加文本
+        // 左侧文本
+        zpl.append("^FO150,30^A0N,25,25^FD").append(qrcodeData).append("^FS");
+
+        // 右侧文本
+        zpl.append("^FO").append(width * 200 - 200).append(",30^A0N,25,25^FD").append(qrcodeData).append("^FS");
+
+        // 添加OCOC文本
+        zpl.append("^FO").append(width * 100 - 50).append(",20^A0N,30,30^FDOCOC^FS");
+
+        // 添加序列号
+        String sn = (String) template.getTemplateData().get("sn");
+        zpl.append("^FO").append(width * 100 - 40).append(",5^A0N,20,20^FD").append(sn).append("^FS");
+
+        // 添加中间分隔线
+        zpl.append("^FO").append(width * 100).append(",15^GB1,70,3^FS");
+
+        // 结束
         zpl.append("^XZ");
+
         return zpl.toString();
     }
 

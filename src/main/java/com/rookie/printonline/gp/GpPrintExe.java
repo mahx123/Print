@@ -32,7 +32,7 @@ public class GpPrintExe {
         //配置打印机（设定打印浓度为12，可选0~15）
         GbLibDll.INSTANCE.sendcommand("DENSITY 8");
         //配置打印机（设定打印方向，可选0或1或00、11、10、01）
-        GbLibDll.INSTANCE.sendcommand("DIRECTION 1,0");
+        GbLibDll.INSTANCE.sendcommand("DIRECTION 0");
         //配置打印机（设定启用/禁用撕纸位置走到撕纸处，可选on（启用）或off（禁用））
         GbLibDll.INSTANCE.sendcommand("SET TEAR ON");
         //配置打印机（设定对应国际代码页为 UTF-8，其他参数可参照TSPL指令）
@@ -87,24 +87,24 @@ public class GpPrintExe {
     }
 
 
-    public static void printByXmlTemplate(){
+    public static void printByXmlTemplate(String cmd){
 
-        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
-        //TemplateData data = new TemplateData("QR123456789", "SN987654321");
-        // 2. 创建转换器
-        GpXmlParseUtils converter = new GpXmlParseUtils(data);
+//        TemplateData data = new TemplateData("0000\n2320\n0025\n6448\n9759\n0010", "SN987654321");
+//        //TemplateData data = new TemplateData("QR123456789", "SN987654321");
+//        // 2. 创建转换器
+//        GpXmlParseUtils converter = new GpXmlParseUtils(data);
         GbLibDll.INSTANCE.clearbuffer();
         // 3. 转换XML为GP指令
         try {
-            String gpCommands = converter.convertToGPCommands("D:\\xml/QR_Print_Template_02.xml");
 
-            GbLibDll.INSTANCE.sendcommand(gpCommands);
+
+            GbLibDll.INSTANCE.sendcommand(cmd);
             GbLibDll.INSTANCE.closeport();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     public static void main(String[] args) {
-        printByXmlTemplate();
+        testCommand();
     }
 }

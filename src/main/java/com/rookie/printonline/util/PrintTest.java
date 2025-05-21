@@ -60,19 +60,25 @@ public class PrintTest implements Printable {
         g2.setColor(Color.black);
 
         try {
+            BufferedImage img = ImageIO.read(new File("D:\\work_space\\Print\\456.png"));
 
             // 计算缩放比例
+            double scale = Math.min(
+                    pf.getImageableWidth() / img.getWidth(),
+                    pf.getImageableHeight() / img.getHeight()
+            );
+
             // 应用变换
             g2.translate(pf.getImageableX(), pf.getImageableY());
-
+            g2.scale(scale, scale);
 
             // 绘制图片
          //   g2.drawImage(img, 0, 0, null);
-            g2.scale(0.12,0.12);
             Node node = parseXmlToNode();
             renderNodeToGraphics2D(node,g2,10000, 3000);
             return PAGE_EXISTS;
         } catch (Exception e) {
+
             e.printStackTrace();
             return NO_SUCH_PAGE;
         }
@@ -83,7 +89,7 @@ public class PrintTest implements Printable {
         Pane labelPane = new Pane();
         try {
             // 1. 解析XML模板
-            Document doc =null;
+            Document doc = XmlUtils.parseXmlFromResources("QR_Print_Template_02.xml");
 
             // 2. 创建JavaFX容器
             Element page = doc.getDocumentElement();
