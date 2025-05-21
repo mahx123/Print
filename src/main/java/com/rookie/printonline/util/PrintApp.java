@@ -13,7 +13,7 @@ public class PrintApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 100;
+        double widthMM = 80;
         double heightMM = 30;
         double marginMM = 2; // 2mm边距
 
@@ -23,12 +23,14 @@ public class PrintApp extends Application {
 
         // 设置纸张
         Paper paper = new Paper();
-        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
+        double size_x= mmToPoints(widthMM);
+        double size_y= mmToPoints(heightMM);
+        paper.setSize(300, 100);
         paper.setImageableArea(
                 mmToPoints(marginMM),
                 mmToPoints(marginMM),
-                mmToPoints(widthMM - 2 * marginMM),
-                mmToPoints(heightMM - 2 * marginMM)
+                300,
+                100
         );
         pf.setPaper(paper);
 
