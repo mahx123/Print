@@ -23,15 +23,12 @@ public class PrintApp extends Application {
 
         // 设置纸张
         Paper paper = new Paper();
-        paper.setSize(300, 80);
-        double x= mmToPoints(marginMM);
-        double y= mmToPoints(marginMM);
-        System.out.println("x:"+x);
+        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
         paper.setImageableArea(
-                x,
-                x,
-                200,
-                60
+                mmToPoints(marginMM),
+                mmToPoints(marginMM),
+                mmToPoints(widthMM - 2 * marginMM),
+                mmToPoints(heightMM - 2 * marginMM)
         );
         pf.setPaper(paper);
 
@@ -55,7 +52,7 @@ public class PrintApp extends Application {
     }
 
     private static double mmToPoints(double mm) {
-        return mm / 25.4 * 300;
+        return mm / 25.4 * 72;
     }
 
     public static void main(String[] args) {
