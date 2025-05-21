@@ -94,27 +94,38 @@ public class PrintTest implements Printable {
 
     public static void saveNodeAsImage(Node node, String filePath) {
         // 1. 确保节点已正确渲染（可能需要临时添加到 Scene）
+
+
+        // 1. 创建场景并添加节点（触发布局计算）
         Scene scene = new Scene(new Group(node));
-
-        // 2. 创建 WritableImage 并捕获节点内容
-        WritableImage image = new WritableImage(
-                (int) node.getBoundsInParent().getWidth(),
-                (int) node.getBoundsInParent().getHeight()
-        );
-        node.snapshot(null, image);
-
-        // 3. 保存为 PNG 文件
-        File file = new File(filePath);
-        try {
-            ImageIO.write(
-                    SwingFXUtils.fromFXImage(image, null),
-                    "png",
-                    file
+        // 强制布局计算（关键步骤）
+        scene.getRoot().applyCss();
+        scene.getRoot().layout(); // 触发布局
+        Platform.runLater(() -> { // 在JavaFX线程中渲染
+            System.out.println(node.getBoundsInParent().getWidth());
+            System.out.println(node.getBoundsInParent().getHeight());
+            // 2. 创建 WritableImage 并捕获节点内容
+            WritableImage image = new WritableImage(
+                    (int) node.getBoundsInParent().getWidth(),
+                    (int) node.getBoundsInParent().getHeight()
             );
-            System.out.println("图片已保存到: " + file.getAbsolutePath());
-        } catch (Exception e) {
-            System.err.println("保存图片失败: " + e.getMessage());
-        }
+            node.snapshot(null, image);
+
+            // 3. 保存为 PNG 文件
+            File file = new File(filePath);
+            try {
+                ImageIO.write(
+                        SwingFXUtils.fromFXImage(image, null),
+                        "png",
+                        file
+                );
+                System.out.println("图片已保存到: " + file.getAbsolutePath());
+            } catch (Exception e) {
+                System.err.println("保存图片失败: " + e.getMessage());
+            }
+        });
+
+
     }
     private Node parseXmlToNode(){
         Pane labelPane = new Pane();
@@ -202,7 +213,7 @@ public class PrintTest implements Printable {
 
             // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(mmToPx(left));
-            System.out.println("content:"+content+",top："+top);
+        //    System.out.println("content:"+content+",top："+top);
             textNode.setLayoutY(mmToPx(top));
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
@@ -214,6 +225,8 @@ public class PrintTest implements Printable {
         }
     }
     private  ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
+
+
         int sizePx_w = (int) mmToPx(widthMM);
         int sizePx_h = (int) mmToPx(heightMM);
         BitMatrix matrix = new MultiFormatWriter().encode(
