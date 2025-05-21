@@ -66,13 +66,13 @@ public class PrintTest implements Printable {
 
             // 应用变换
             g2.translate(pf.getImageableX(), pf.getImageableY());
-            g2.scale(0.18, 0.18);
+            g2.scale(1, 1);
 
             // 绘制图片
          //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
             saveNodeAsImage(node, "456.png");
-            System.out.println("=============");
+          //  System.out.println("=============");
             renderNodeToGraphics2D(node,g2,10000, 3000);
             return PAGE_EXISTS;
         } catch (Exception e) {
@@ -119,7 +119,9 @@ public class PrintTest implements Printable {
             double heightMM = Double.parseDouble(page.getAttribute("height"));
 
 
-           // labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+            labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+            labelPane.setLayoutX(0);
+            labelPane.setLayoutY(0);
             labelPane.setStyle("-fx-background-color: white;");
             // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");
@@ -153,9 +155,9 @@ public class PrintTest implements Printable {
 
         // 创建布局容器（用于承载所有子元素）
         Pane layoutContainer = new Pane();
-        layoutContainer.setPrefSize(width, height);
-        layoutContainer.setLayoutX(left);
-        layoutContainer.setLayoutY(top);
+        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height));
+        layoutContainer.setLayoutX(mmToPx(left));
+        layoutContainer.setLayoutY(mmToPx(top));
         // 解析并应用layout的style属性
         if (layout.hasAttribute("style")) {
             applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
@@ -167,8 +169,8 @@ public class PrintTest implements Printable {
             if ("qrcode".equals(barcode.getAttribute("type"))) {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
-                qrCode.setLayoutX(0);
-                qrCode.setLayoutY(0);
+                qrCode.setLayoutX(mmToPx(left));
+                qrCode.setLayoutY(mmToPx(top-5));
                 parent.getChildren().add(qrCode);
             }
             return;
