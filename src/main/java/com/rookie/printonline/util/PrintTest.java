@@ -119,7 +119,7 @@ public class PrintTest implements Printable {
             double heightMM = Double.parseDouble(page.getAttribute("height"));
 
 
-            labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
+           // labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
             labelPane.setStyle("-fx-background-color: white;");
             // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");
@@ -153,9 +153,9 @@ public class PrintTest implements Printable {
 
         // 创建布局容器（用于承载所有子元素）
         Pane layoutContainer = new Pane();
-        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height));
-        layoutContainer.setLayoutX(mmToPx(left));
-        layoutContainer.setLayoutY(mmToPx(top));
+        layoutContainer.setPrefSize(width, height);
+        layoutContainer.setLayoutX(left);
+        layoutContainer.setLayoutY(top);
         // 解析并应用layout的style属性
         if (layout.hasAttribute("style")) {
             applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
@@ -167,8 +167,8 @@ public class PrintTest implements Printable {
             if ("qrcode".equals(barcode.getAttribute("type"))) {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
-                qrCode.setLayoutX(mmToPx(left));
-                qrCode.setLayoutY(mmToPx(top));
+                qrCode.setLayoutX(0);
+                qrCode.setLayoutY(0);
                 parent.getChildren().add(qrCode);
             }
             return;
