@@ -150,8 +150,8 @@ public class PrintTest implements Printable {
             labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
             labelPane.setLayoutX(0);
             labelPane.setLayoutY(0);
-            labelPane.setStyle("-fx-background-color: white;");
-            labelPane.setStyle("-fx-background-color: white; -fx-padding: 0;");
+            labelPane.setStyle("-fx-background-color: white; -fx-padding: 0; -fx-border-width: 0;");
+
 
             // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");

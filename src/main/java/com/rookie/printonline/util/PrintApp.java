@@ -13,8 +13,8 @@ public class PrintApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 110;
-        double heightMM = 50;
+        double widthMM = 100;
+        double heightMM = 32;
         double marginMM = 0; // 2mm边距
 
         // 创建页面格式
