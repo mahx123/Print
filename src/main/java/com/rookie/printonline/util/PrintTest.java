@@ -234,14 +234,13 @@ public class PrintTest implements Printable {
             applyTextStyle(textNode, text.getAttribute("style"));
         //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
-            // 调整垂直位置
-            double textHeight = textNode.boundsInLocalProperty().get().getHeight();
+            // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(leftPx);
-            textNode.setLayoutY(topPx + textHeight / 2);
-
+        //    System.out.println("content:"+content+",top："+top);
+            textNode.setLayoutY(topPx);
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+               // textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
@@ -332,14 +331,14 @@ public class PrintTest implements Printable {
                 case "fontFamily":
                     String fontFamily = kv[1].trim();
                     if (fontFamily.equals("黑体")) {
-                        fontFamily = "SimHei"; // Windows下的黑体
+                      //  fontFamily = "SimHei"; // Windows下的黑体
                     }
                     text.setFont(Font.font(fontFamily, text.getFont().getSize()));
                     break;
                 case "fontSize":
                     try {
                         double sizeInMm = Double.parseDouble(kv[1].trim());
-                        double sizeInPoints = mmToPoints(sizeInMm);
+                        double sizeInPoints = mmToPoints(sizeInMm)*1.5;
                         text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
                     } catch (NumberFormatException e) {
                         System.err.println("字体大小解析错误: " + e.getMessage());
