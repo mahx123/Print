@@ -218,7 +218,7 @@ public class PrintTest implements Printable {
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-               // textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
