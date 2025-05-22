@@ -384,6 +384,11 @@ public class PrintTest implements Printable {
                 parentNode.setTranslateY(115);  // Y轴偏移5像素
             }
         }
+        // 在方法最后添加：
+        if(text.getText().equals(DATA.get("sn"))) {
+            // 只对SN文本向右移动5mm
+            text.setTranslateX(mmToPx(0.5));
+        }
 
     }
 
