@@ -199,11 +199,12 @@ public class PrintTest implements Printable {
             if ("qrcode".equals(barcode.getAttribute("type"))) {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
-                qrCode.setLayoutX(mmToPx(left));
-                qrCode.setLayoutY(mmToPx(top));
+                qrCode.setLayoutX(0);
+                qrCode.setLayoutY(0);
                 qrCode.setFitWidth(mmToPx(width));
                 qrCode.setFitHeight(mmToPx(height));
-                parent.getChildren().add(qrCode);
+                layoutContainer.getChildren().add(qrCode); // 将二维码添加到布局容器
+                parent.getChildren().add(layoutContainer); // 将布局容器添加到父容器
             }
             return;
         }
@@ -219,14 +220,17 @@ public class PrintTest implements Printable {
                     .replace("<%=_data.sn%>", DATA.get("sn")).trim();
 
             Text textNode = new Text(content);
+            double leftPx = mmToPx(Double.parseDouble(layout.getAttribute("left")));
+            double topPx = mmToPx(Double.parseDouble(layout.getAttribute("top")));
 
             // 应用XML中定义的样式
             applyTextStyle(textNode, text.getAttribute("style"));
+            System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
             // 设置文本位置（垂直居中调整）
-            textNode.setLayoutX(mmToPx(left));
+            textNode.setLayoutX(leftPx);
         //    System.out.println("content:"+content+",top："+top);
-            textNode.setLayoutY(mmToPx(top));
+            textNode.setLayoutY(topPx);
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
