@@ -190,9 +190,9 @@ public class PrintTest implements Printable {
         layoutContainer.setLayoutX(mmToPx(left));
         layoutContainer.setLayoutY(mmToPx(top));
         // 解析并应用layout的style属性
-        if (layout.hasAttribute("style")) {
+     //   if (layout.hasAttribute("style")) {
             applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
-        }
+    //    }
         // 处理二维码
         NodeList barcodes = layout.getElementsByTagName("barcode");
         if (barcodes.getLength() > 0) {
