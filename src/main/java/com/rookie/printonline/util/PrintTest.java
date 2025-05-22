@@ -109,8 +109,8 @@ public class PrintTest implements Printable {
         scene.getRoot().applyCss();
         scene.getRoot().layout(); // 触发布局
         Platform.runLater(() -> { // 在JavaFX线程中渲染
-            System.out.println(node.getBoundsInParent().getWidth());
-            System.out.println(node.getBoundsInParent().getHeight());
+         //   System.out.println(node.getBoundsInParent().getWidth());
+         //   System.out.println(node.getBoundsInParent().getHeight());
             // 2. 创建 WritableImage 并捕获节点内容
             WritableImage image = new WritableImage(
                     (int) node.getBoundsInParent().getWidth(),
@@ -318,38 +318,39 @@ public class PrintTest implements Printable {
      * @param mm 毫米值
      * @return 对应的像素值
      */
-
     private  void applyTextStyle(Text text, String style) {
         String[] styles = style.split(";");
         for (String s : styles) {
             String[] kv = s.split(":");
             if (kv.length != 2) continue;
 
-            switch (kv[0]) {
+            switch (kv[0].trim()) {
                 case "fontFamily":
-                    // 确保使用系统支持的字体
                     String fontFamily = kv[1].trim();
                     if (fontFamily.equals("黑体")) {
                         fontFamily = "SimHei"; // Windows下的黑体
                     }
                     text.setFont(Font.font(fontFamily, text.getFont().getSize()));
                     break;
-
                 case "fontSize":
-                    double sizeInMm = Double.parseDouble(kv[1]);
-                    double sizeInPoints = mmToPoints(sizeInMm);
-                    text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
+                    try {
+                        double sizeInMm = Double.parseDouble(kv[1].trim());
+                        double sizeInPoints = mmToPoints(sizeInMm);
+                        text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
+                    } catch (NumberFormatException e) {
+                        System.err.println("字体大小解析错误: " + e.getMessage());
+                    }
                     break;
                 case "fontWeight":
                     if ("bold".equals(kv[1].trim())) {
                         text.setStyle("-fx-font-weight: bold;");
-                        // 或者同时使用两种方法
                         text.setFont(Font.font(
                                 text.getFont().getFamily(),
                                 FontWeight.BOLD,
                                 text.getFont().getSize()
                         ));
                     }
+                    break;
                 case "align":
                     if ("center".equals(kv[1].trim())) {
                         text.setTextAlignment(TextAlignment.CENTER);
