@@ -200,7 +200,9 @@ public class PrintTest implements Printable {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
                 qrCode.setLayoutX(mmToPx(left));
-                qrCode.setLayoutY(mmToPx(top-5));
+                qrCode.setLayoutY(mmToPx(top));
+                qrCode.setFitWidth(mmToPx(width));
+                qrCode.setFitHeight(mmToPx(height));
                 parent.getChildren().add(qrCode);
             }
             return;
