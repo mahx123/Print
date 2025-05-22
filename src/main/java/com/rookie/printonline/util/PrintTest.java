@@ -83,7 +83,7 @@ public class PrintTest implements Printable {
 
             // 定义左右偏移量，3mm转换为像素
 
-            double offsetPx = -4;
+            double offsetPx = -9;
 
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
@@ -190,7 +190,7 @@ public class PrintTest implements Printable {
 
         // 创建布局容器（用于承载所有子元素）
         Pane layoutContainer = new Pane();
-        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height));
+        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height)*1.1);
         layoutContainer.setLayoutX(mmToPx(left));
         layoutContainer.setLayoutY(mmToPx(top));
         // 解析并应用layout的style属性
@@ -206,10 +206,11 @@ public class PrintTest implements Printable {
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
               //  qrCode.getParent() .setLayoutX(0);
               //  qrCode.getParent().setLayoutY(0);
-                qrCode.setLayoutX(0);
-                qrCode.setLayoutY(0);
-                qrCode.setFitWidth(mmToPx(width));
-                qrCode.setFitHeight(mmToPx(height));
+               // parent.setLayoutY(-10);
+                qrCode.setLayoutX(mmToPx(-1));
+                qrCode.setLayoutY(mmToPx(-4));
+                qrCode.setFitWidth(mmToPx(width)*1.1);
+                qrCode.setFitHeight(mmToPx(height)*1.2);
                 layoutContainer.getChildren().add(qrCode); // 将二维码添加到布局容器
                 parent.getChildren().add(layoutContainer); // 将布局容器添加到父容器
             }
@@ -240,7 +241,7 @@ public class PrintTest implements Printable {
             textNode.setLayoutY(topPx);
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-               // textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+               textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
@@ -338,7 +339,7 @@ public class PrintTest implements Printable {
                 case "fontSize":
                     try {
                         double sizeInMm = Double.parseDouble(kv[1].trim());
-                        double sizeInPoints = mmToPoints(sizeInMm)*1.5;
+                        double sizeInPoints = mmToPoints(sizeInMm)*1.4;
                         text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
                     } catch (NumberFormatException e) {
                         System.err.println("字体大小解析错误: " + e.getMessage());
