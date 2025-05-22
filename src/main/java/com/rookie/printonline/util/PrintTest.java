@@ -80,7 +80,7 @@ public class PrintTest implements Printable {
 
             // 应用变换
             g2.translate(pf.getImageableX(), pf.getImageableY());
-            g2.scale(scale, scale);
+            g2.scale(scale*1.5, scale*1.5);
           //  System.out.println("=============");
             double actualWidth = node.getBoundsInParent().getWidth();
             double actualHeight = node.getBoundsInParent().getHeight();
