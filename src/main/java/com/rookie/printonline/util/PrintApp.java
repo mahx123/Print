@@ -15,7 +15,7 @@ public class PrintApp extends Application {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 110;
         double heightMM = 50;
-        double marginMM = 2; // 2mm边距
+        double marginMM = 0; // 2mm边距
 
         // 创建页面格式
         PageFormat pf = new PageFormat();
