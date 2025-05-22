@@ -84,11 +84,12 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             //primaryStage.show();
             //saveNodeAsImage(labelPane, "456.png");
-            PrintTest.saveNodeAsImage(labelPane,"456.png");
+            Node node = new PrintTest().parseXmlToNode();
+            PrintTest.saveNodeAsImage(node,"456.png");
             // 5. 延迟打印以确保渲染完成
-            PauseTransition delay = new PauseTransition(Duration.millis(400));
-            delay.setOnFinished(event -> printJavaFXNode(labelPane));
-            delay.play();
+//            PauseTransition delay = new PauseTransition(Duration.millis(400));
+//            delay.setOnFinished(event -> printJavaFXNode(labelPane));
+//            delay.play();
 
         } catch (Exception e) {
             e.printStackTrace();

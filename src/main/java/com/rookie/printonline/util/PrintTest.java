@@ -135,7 +135,7 @@ public class PrintTest implements Printable {
 
 
     }
-    private Node parseXmlToNode(){
+    public Node parseXmlToNode(){
         Pane labelPane = new Pane();
         try {
             // 1. 解析XML模板
@@ -401,43 +401,8 @@ public class PrintTest implements Printable {
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
   
     public static void main(String[] args) {
-        // 设置自定义纸张大小(100mm x 30mm)
-        double widthMM = 100;
-        double heightMM = 30;
-        double marginMM = 2; // 2mm边距
-
-        // 创建页面格式
-        PageFormat pf = new PageFormat();
-        pf.setOrientation(PageFormat.PORTRAIT);
-
-        // 设置纸张
-        Paper paper = new Paper();
-//        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
-//        paper.setImageableArea(
-//                mmToPoints(marginMM),
-//                mmToPoints(marginMM),
-//                mmToPoints(widthMM - 2 * marginMM),
-//                mmToPoints(heightMM - 2 * marginMM)
-//        );
-        pf.setPaper(paper);
-
-        // 创建打印作业
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(), pf);
-
-        try {
-            // 显示打印对话框
-            if (job.printDialog()) {
-                // 重要：设置自定义纸张大小
-                job.setPrintable(new PrintTest(), pf);
-
-                System.out.println("开始打印...");
-                job.print();
-                System.out.println("打印完成");
-            }
-        } catch (PrinterException e) {
-            System.err.println("打印失败: " + e.getMessage());
-        }
+        Node node = new PrintTest().parseXmlToNode();
+        saveNodeAsImage(node, "456.png");
     }
     // 必须有一个公共无参构造器
     public PrintTest() {
