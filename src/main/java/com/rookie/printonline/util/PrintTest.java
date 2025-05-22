@@ -209,8 +209,8 @@ public class PrintTest implements Printable {
                // parent.setLayoutY(-10);
                 qrCode.setLayoutX(mmToPx(-1));
                 qrCode.setLayoutY(mmToPx(-4));
-                qrCode.setFitWidth(mmToPx(width)*1.1);
-                qrCode.setFitHeight(mmToPx(height)*1.2);
+                qrCode.setFitWidth(mmToPx(width));
+                qrCode.setFitHeight(mmToPx(height));
                 layoutContainer.getChildren().add(qrCode); // 将二维码添加到布局容器
                 parent.getChildren().add(layoutContainer); // 将布局容器添加到父容器
             }
