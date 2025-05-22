@@ -69,8 +69,8 @@ public class PrintTest implements Printable {
             // 绘制图片
          //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
-            saveNodeAsImage(node, "456.png");
-            BufferedImage img = ImageIO.read(new File("456.png"));
+        //    saveNodeAsImage(node, "456.png");
+           // BufferedImage img = ImageIO.read(new File("456.png"));
 
             // 直接渲染到Graphics2D，不经过中间图片
             double width = node.getBoundsInParent().getWidth();
