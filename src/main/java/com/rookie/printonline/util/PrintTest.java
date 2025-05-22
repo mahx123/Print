@@ -336,12 +336,12 @@ public class PrintTest implements Printable {
                     if (fontFamily.equals("黑体")) {
                         fontFamily = "SimHei"; // Windows下的黑体
                     }
-                    text.setFont(Font.font(fontFamily, text.getFont().getSize()));
+                    text.setFont(Font.font(fontFamily, text.getFont().getSize()*1.5));
                     break;
                 case "fontSize":
                     try {
                         double sizeInMm = Double.parseDouble(kv[1].trim());
-                        double sizeInPoints = mmToPoints(sizeInMm)*1.4;
+                        double sizeInPoints = mmToPoints(sizeInMm)*1.5;
                         text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
                     } catch (NumberFormatException e) {
                         System.err.println("字体大小解析错误: " + e.getMessage());
@@ -353,7 +353,7 @@ public class PrintTest implements Printable {
                         text.setFont(Font.font(
                                 text.getFont().getFamily(),
                                 FontWeight.BOLD,
-                                text.getFont().getSize()
+                                text.getFont().getSize()*1.5
                         ));
                     }
                     break;
