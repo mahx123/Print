@@ -118,7 +118,7 @@ public class PrintTest implements Printable {
             );
             SnapshotParameters params = new SnapshotParameters();
             params.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            node.snapshot(null, image);
+            node.snapshot(params, image);
 
             // 3. 保存为 PNG 文件
             File file = new File(filePath);
