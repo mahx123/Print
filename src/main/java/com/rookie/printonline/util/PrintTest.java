@@ -230,7 +230,7 @@ public class PrintTest implements Printable {
             double topPx = mmToPx(Double.parseDouble(layout.getAttribute("top")));
 
             // 应用XML中定义的样式
-            applyTextStyle(textNode, text.getAttribute("style"));
+            applyTextStyle(textNode, text.getAttribute("style"),leftPx);
             //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
             // 设置文本位置（垂直居中调整）
@@ -326,7 +326,7 @@ public class PrintTest implements Printable {
      * @param mm 毫米值
      * @return 对应的像素值
      */
-    private void applyTextStyle(Text text, String style) {
+    private void applyTextStyle(Text text, String style,double left) {
         String[] styles = style.split(";");
         for (String s : styles) {
             String[] kv = s.split(":");
@@ -374,20 +374,21 @@ public class PrintTest implements Printable {
             }
         }
         if (style.contains("fontFamily") && !style.contains("fontSize")) {
-            text.setFont(Font.font("SimHei", mmToPoints(10)));
+         //   text.setFont(Font.font("SimHei", mmToPoints(10)));
             text.setTextAlignment(TextAlignment.RIGHT);
-            // 获取Text的父节点（即parent）
-            Parent parentNode = text.getParent();
-            if (parentNode != null) {
-                // 在这里可以对父节点进行偏移量设置
-                parentNode.setTranslateX(15); // X轴偏移10像素
-                parentNode.setTranslateY(115);  // Y轴偏移5像素
-            }
+//            // 获取Text的父节点（即parent）
+//            Parent parentNode = text.getParent();
+//            if (parentNode != null) {
+//                // 在这里可以对父节点进行偏移量设置
+//                parentNode.setTranslateX(15); // X轴偏移10像素
+//                parentNode.setTranslateY(115);  // Y轴偏移5像素
+//            }
         }
         // 在方法最后添加：
         if(text.getText().equals(DATA.get("sn"))) {
             // 只对SN文本向右移动5mm
-            text.setTranslateX(mmToPx(0.5));
+            text.setTranslateX(mmToPx(3));
+          //  text.setLayoutX(mmToPx(left));
         }
 
     }
