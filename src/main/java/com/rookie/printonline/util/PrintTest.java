@@ -234,7 +234,7 @@ public class PrintTest implements Printable {
             //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
             // 设置文本位置（垂直居中调整）
-            textNode.setLayoutX(leftPx + 5);
+            textNode.setLayoutX(leftPx);
             //    System.out.println("content:"+content+",top："+top);
             textNode.setLayoutY(topPx);
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
