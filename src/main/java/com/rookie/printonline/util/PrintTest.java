@@ -225,7 +225,7 @@ public class PrintTest implements Printable {
 
             // 应用XML中定义的样式
             applyTextStyle(textNode, text.getAttribute("style"));
-            System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
+        //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
             // 设置文本位置（垂直居中调整）
             textNode.setLayoutX(leftPx);
@@ -333,7 +333,7 @@ public class PrintTest implements Printable {
                     break;
 
                 case "fontSize":
-                  //  text.setFont(Font.font(text.getFont().getFamily(), Double.parseDouble(kv[1])));
+                    System.out.println("content:"+text.getText()+",STYLE:"+s);
                     double v = Double.parseDouble(kv[1]);
                     double v2 = mmToPoints(v);
                     double v1 = pxToMm( Double.parseDouble(kv[1]));
