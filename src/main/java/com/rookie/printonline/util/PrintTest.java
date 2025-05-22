@@ -331,7 +331,7 @@ public class PrintTest implements Printable {
                 case "fontFamily":
                     String fontFamily = kv[1].trim();
                     if (fontFamily.equals("黑体")) {
-                      //  fontFamily = "SimHei"; // Windows下的黑体
+                        fontFamily = "SimHei"; // Windows下的黑体
                     }
                     text.setFont(Font.font(fontFamily, text.getFont().getSize()));
                     break;
