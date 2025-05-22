@@ -73,10 +73,14 @@ public class PrintTest implements Printable {
             Node node = parseXmlToNode();
             saveNodeAsImage(node, "456.png");
             BufferedImage img = ImageIO.read(new File("456.png"));
+
+            // 直接渲染到Graphics2D，不经过中间图片
+            double width = node.getBoundsInParent().getWidth();
+            double height = node.getBoundsInParent().getHeight();
             // 计算缩放比例
             double scale = Math.min(
-                    pf.getImageableWidth() / img.getWidth(),
-                    pf.getImageableHeight() / img.getHeight()
+                    pf.getImageableWidth() / width,
+                    pf.getImageableHeight() / height
             );
 
             // 应用变换
