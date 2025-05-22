@@ -18,6 +18,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -148,7 +149,7 @@ public class PrintTest implements Printable {
 
 
             labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
-            labelPane.setLayoutX(0);
+            labelPane.setLayoutX(1);
             labelPane.setLayoutY(0);
             labelPane.setStyle("-fx-background-color: white; -fx-padding: 0; -fx-border-width: 0;");
 
@@ -199,6 +200,8 @@ public class PrintTest implements Printable {
             if ("qrcode".equals(barcode.getAttribute("type"))) {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
+              //  qrCode.getParent() .setLayoutX(0);
+              //  qrCode.getParent().setLayoutY(0);
                 qrCode.setLayoutX(0);
                 qrCode.setLayoutY(0);
                 qrCode.setFitWidth(mmToPx(width));
@@ -227,10 +230,10 @@ public class PrintTest implements Printable {
             applyTextStyle(textNode, text.getAttribute("style"));
         //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
-            // 设置文本位置（垂直居中调整）
+            // 调整垂直位置
+            double textHeight = textNode.boundsInLocalProperty().get().getHeight();
             textNode.setLayoutX(leftPx);
-        //    System.out.println("content:"+content+",top："+top);
-            textNode.setLayoutY(topPx);
+            textNode.setLayoutY(topPx + textHeight / 2);
 
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
@@ -340,8 +343,14 @@ public class PrintTest implements Printable {
                     text.setFont(Font.font(text.getFont().getFamily(),mmToPoints(v)));
                     break;
                 case "fontWeight":
-                    if ("bold".equals(kv[1])) {
+                    if ("bold".equals(kv[1].trim())) {
                         text.setStyle("-fx-font-weight: bold;");
+                        // 或者同时使用两种方法
+                        text.setFont(Font.font(
+                                text.getFont().getFamily(),
+                                FontWeight.BOLD,
+                                text.getFont().getSize()
+                        ));
                     }
                 case "align":
                     if ("center".equals(kv[1].trim())) {
