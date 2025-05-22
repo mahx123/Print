@@ -1,6 +1,7 @@
 package com.rookie.printonline.util;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -80,7 +81,7 @@ public class PrintTest implements Printable {
 
             // 应用变换
             g2.translate(pf.getImageableX(), pf.getImageableY());
-            g2.scale(scale*1.5, scale*1.5);
+            g2.scale(scale, scale);
           //  System.out.println("=============");
             double actualWidth = node.getBoundsInParent().getWidth();
             double actualHeight = node.getBoundsInParent().getHeight();
@@ -100,6 +101,8 @@ public class PrintTest implements Printable {
 
         // 1. 创建场景并添加节点（触发布局计算）
         Scene scene = new Scene(new Group(node));
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
         // 强制布局计算（关键步骤）
         scene.getRoot().applyCss();
         scene.getRoot().layout(); // 触发布局
@@ -111,6 +114,8 @@ public class PrintTest implements Printable {
                     (int) node.getBoundsInParent().getWidth(),
                     (int) node.getBoundsInParent().getHeight()
             );
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(javafx.scene.paint.Color.TRANSPARENT);
             node.snapshot(null, image);
 
             // 3. 保存为 PNG 文件
@@ -145,6 +150,8 @@ public class PrintTest implements Printable {
             labelPane.setLayoutX(0);
             labelPane.setLayoutY(0);
             labelPane.setStyle("-fx-background-color: white;");
+            labelPane.setStyle("-fx-background-color: white; -fx-padding: 0;");
+
             // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");
             for (int i = 0; i < layouts.getLength(); i++) {
@@ -228,15 +235,23 @@ public class PrintTest implements Printable {
     }
     private  ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
 
-
         int sizePx_w = (int) mmToPx(widthMM);
         int sizePx_h = (int) mmToPx(heightMM);
+
+        // 创建编码参数并禁用边距
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.MARGIN, 0); // 关键：设置边距为0
+
         BitMatrix matrix = new MultiFormatWriter().encode(
-                content, BarcodeFormat.QR_CODE, sizePx_w, sizePx_h);
+                content,
+                BarcodeFormat.QR_CODE,
+                sizePx_w,
+                sizePx_h,
+                hints); // 传入编码参数
 
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        javax.imageio.ImageIO.write(bufferedImage, "png", os);
+        ImageIO.write(bufferedImage, "png", os);
 
         return new ImageView(new Image(new ByteArrayInputStream(os.toByteArray())));
     }
