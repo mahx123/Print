@@ -83,7 +83,7 @@ public class PrintTest implements Printable {
 
             // 定义左右偏移量，3mm转换为像素
 
-            double offsetPx = -2;
+            double offsetPx = -4;
 
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
@@ -190,7 +190,7 @@ public class PrintTest implements Printable {
 
         // 创建布局容器（用于承载所有子元素）
         Pane layoutContainer = new Pane();
-        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height)*1.1);
+        layoutContainer.setPrefSize(mmToPx(width), mmToPx(height));
         layoutContainer.setLayoutX(mmToPx(left));
         layoutContainer.setLayoutY(mmToPx(top));
         // 解析并应用layout的style属性
@@ -206,11 +206,13 @@ public class PrintTest implements Printable {
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
               //  qrCode.getParent() .setLayoutX(0);
               //  qrCode.getParent().setLayoutY(0);
+
+              //  layoutContainer.setPrefSize(mmToPx(width)*1.1, mmToPx(height));
                // parent.setLayoutY(-10);
-                qrCode.setLayoutX(mmToPx(-1));
+                qrCode.setLayoutX(mmToPx(0));
                 qrCode.setLayoutY(mmToPx(-4));
-                qrCode.setFitWidth(mmToPx(width));
-                qrCode.setFitHeight(mmToPx(height));
+                qrCode.setFitWidth(mmToPx(width)*1.05);
+                qrCode.setFitHeight(mmToPx(height)*1.05);
                 layoutContainer.getChildren().add(qrCode); // 将二维码添加到布局容器
                 parent.getChildren().add(layoutContainer); // 将布局容器添加到父容器
             }
