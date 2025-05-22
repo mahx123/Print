@@ -336,11 +336,9 @@ public class PrintTest implements Printable {
                     break;
 
                 case "fontSize":
-                    System.out.println("content:"+text.getText()+",STYLE:"+s);
-                    double v = Double.parseDouble(kv[1]);
-                    double v2 = mmToPoints(v);
-                    double v1 = pxToMm( Double.parseDouble(kv[1]));
-                    text.setFont(Font.font(text.getFont().getFamily(),mmToPoints(v)));
+                    double sizeInMm = Double.parseDouble(kv[1]);
+                    double sizeInPoints = mmToPoints(sizeInMm);
+                    text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
                     break;
                 case "fontWeight":
                     if ("bold".equals(kv[1].trim())) {
