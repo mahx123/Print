@@ -81,8 +81,12 @@ public class PrintTest implements Printable {
                     pf.getImageableHeight() / height
             );
 
-            // 应用变换
-            g2.translate(pf.getImageableX(), pf.getImageableY());
+            // 定义左右偏移量，3mm转换为像素
+
+            double offsetPx = -4;
+
+            // 应用变换，调整x坐标进行偏移
+            g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
             g2.scale(scale, scale);
           //  System.out.println("=============");
             double actualWidth = node.getBoundsInParent().getWidth();
@@ -149,7 +153,7 @@ public class PrintTest implements Printable {
 
 
             labelPane.setPrefSize(mmToPx(widthMM), mmToPx(heightMM));
-            labelPane.setLayoutX(1);
+            labelPane.setLayoutX(0);
             labelPane.setLayoutY(0);
             labelPane.setStyle("-fx-background-color: white; -fx-padding: 0; -fx-border-width: 0;");
 
