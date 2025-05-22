@@ -8,10 +8,7 @@ import com.google.zxing.common.BitMatrix;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -22,6 +19,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.dom4j.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -45,8 +43,7 @@ import static javafx.application.Application.launch;
 public class PrintTest implements Printable {
     /**
      * @param Graphic指明打印的图形环境
-     * @param PageFormat指明打印页格式
-     *            （页面大小以点为计量单位，1点为1英才的1/72，1英寸为25.4毫米。A4纸大致为595×842点）
+     * @param PageFormat指明打印页格式 （页面大小以点为计量单位，1点为1英才的1/72，1英寸为25.4毫米。A4纸大致为595×842点）
      * @param pageIndex指明页号
      **/
     // private final static int POINTS_PER_INCH = 32;
@@ -63,14 +60,11 @@ public class PrintTest implements Printable {
         try {
 
 
-
-
-
             // 绘制图片
-         //   g2.drawImage(img, 0, 0, null);
+            //   g2.drawImage(img, 0, 0, null);
             Node node = parseXmlToNode();
-        //    saveNodeAsImage(node, "456.png");
-           // BufferedImage img = ImageIO.read(new File("456.png"));
+            //    saveNodeAsImage(node, "456.png");
+            // BufferedImage img = ImageIO.read(new File("456.png"));
 
             // 直接渲染到Graphics2D，不经过中间图片
             double width = node.getBoundsInParent().getWidth();
@@ -88,10 +82,10 @@ public class PrintTest implements Printable {
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
             g2.scale(scale, scale);
-          //  System.out.println("=============");
+            //  System.out.println("=============");
             double actualWidth = node.getBoundsInParent().getWidth();
             double actualHeight = node.getBoundsInParent().getHeight();
-            renderNodeToGraphics2D(node,g2,(int)actualWidth, (int)actualHeight);
+            renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
             return PAGE_EXISTS;
         } catch (Exception e) {
 
@@ -113,8 +107,8 @@ public class PrintTest implements Printable {
         scene.getRoot().applyCss();
         scene.getRoot().layout(); // 触发布局
         Platform.runLater(() -> { // 在JavaFX线程中渲染
-         //   System.out.println(node.getBoundsInParent().getWidth());
-         //   System.out.println(node.getBoundsInParent().getHeight());
+            //   System.out.println(node.getBoundsInParent().getWidth());
+            //   System.out.println(node.getBoundsInParent().getHeight());
             // 2. 创建 WritableImage 并捕获节点内容
             WritableImage image = new WritableImage(
                     (int) node.getBoundsInParent().getWidth(),
@@ -140,7 +134,8 @@ public class PrintTest implements Printable {
 
 
     }
-    public Node parseXmlToNode(){
+
+    public Node parseXmlToNode() {
         Pane labelPane = new Pane();
         try {
             // 1. 解析XML模板
@@ -178,11 +173,12 @@ public class PrintTest implements Printable {
 
     private static final double DPI = 300; // 标准DPI
     private static final double MM_TO_INCH = 25.4;
-    private  double mmToPx(double mm) {
+
+    private double mmToPx(double mm) {
         return mm / MM_TO_INCH * DPI;
     }
 
-    private  void processLayoutElement(Element layout, Pane parent) throws Exception {
+    private void processLayoutElement(Element layout, Pane parent) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
         double height = Double.parseDouble(layout.getAttribute("height"));
         double left = Double.parseDouble(layout.getAttribute("left"));
@@ -194,9 +190,9 @@ public class PrintTest implements Printable {
         layoutContainer.setLayoutX(mmToPx(left));
         layoutContainer.setLayoutY(mmToPx(top));
         // 解析并应用layout的style属性
-     //   if (layout.hasAttribute("style")) {
-            applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
-    //    }
+        //   if (layout.hasAttribute("style")) {
+        applyLayoutStyle(layoutContainer, layout.getAttribute("style"));
+        //    }
         // 处理二维码
         NodeList barcodes = layout.getElementsByTagName("barcode");
         if (barcodes.getLength() > 0) {
@@ -204,15 +200,15 @@ public class PrintTest implements Printable {
             if ("qrcode".equals(barcode.getAttribute("type"))) {
                 String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
-              //  qrCode.getParent() .setLayoutX(0);
-              //  qrCode.getParent().setLayoutY(0);
+                //  qrCode.getParent() .setLayoutX(0);
+                //  qrCode.getParent().setLayoutY(0);
 
-              //  layoutContainer.setPrefSize(mmToPx(width)*1.1, mmToPx(height));
-               // parent.setLayoutY(-10);
+                //  layoutContainer.setPrefSize(mmToPx(width)*1.1, mmToPx(height));
+                // parent.setLayoutY(-10);
                 qrCode.setLayoutX(mmToPx(0));
                 qrCode.setLayoutY(mmToPx(-4));
-                qrCode.setFitWidth(mmToPx(width)*1.05);
-                qrCode.setFitHeight(mmToPx(height)*1.05);
+                qrCode.setFitWidth(mmToPx(width) * 1.05);
+                qrCode.setFitHeight(mmToPx(height) * 1.05);
                 layoutContainer.getChildren().add(qrCode); // 将二维码添加到布局容器
                 parent.getChildren().add(layoutContainer); // 将布局容器添加到父容器
             }
@@ -235,20 +231,21 @@ public class PrintTest implements Printable {
 
             // 应用XML中定义的样式
             applyTextStyle(textNode, text.getAttribute("style"));
-        //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
+            //    System.out.println("XML left value: " + layout.getAttribute("left") + "mm");
 
             // 设置文本位置（垂直居中调整）
-            textNode.setLayoutX(leftPx);
-        //    System.out.println("content:"+content+",top："+top);
+            textNode.setLayoutX(leftPx + 5);
+            //    System.out.println("content:"+content+",top："+top);
             textNode.setLayoutY(topPx);
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-               textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
         }
     }
+
     private ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
         int sizePx_w = (int) mmToPx(widthMM);
         int sizePx_h = (int) mmToPx(heightMM);
@@ -256,8 +253,8 @@ public class PrintTest implements Printable {
         // 彻底消除二维码边距的设置
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.MARGIN, 0); // 设置边距为0
-      //  hints.put(EncodeHintType.QR_VERSION, 10); // 固定版本号避免自动调整
-       // hints.put(EncodeHintType.MARGIN, 0); // 关键：设置边距为0
+        //  hints.put(EncodeHintType.QR_VERSION, 10); // 固定版本号避免自动调整
+        // hints.put(EncodeHintType.MARGIN, 0); // 关键：设置边距为0
 
         BitMatrix matrix = new MultiFormatWriter().encode(
                 content,
@@ -272,7 +269,8 @@ public class PrintTest implements Printable {
 
         return new ImageView(new Image(new ByteArrayInputStream(os.toByteArray())));
     }
-    private  void applyLayoutStyle(Pane pane, String style) {
+
+    private void applyLayoutStyle(Pane pane, String style) {
         Map<String, String> styleMap = parseStyle(style);
 
         // 背景色
@@ -310,21 +308,25 @@ public class PrintTest implements Printable {
 
     /**
      * 将像素转换为毫米
+     *
      * @param px 像素值
      * @return 对应的毫米值
      */
     public static double pxToMm(double px) {
         return px / DPI * 25.4;
     }
+
     private double mmToPoints(double mm) {
         return mm / 25.4 * 72; // 1英寸=72点
     }
+
     /**
      * 将毫米转换为像素
+     *
      * @param mm 毫米值
      * @return 对应的像素值
      */
-    private  void applyTextStyle(Text text, String style) {
+    private void applyTextStyle(Text text, String style) {
         String[] styles = style.split(";");
         for (String s : styles) {
             String[] kv = s.split(":");
@@ -336,12 +338,13 @@ public class PrintTest implements Printable {
                     if (fontFamily.equals("黑体")) {
                         fontFamily = "SimHei"; // Windows下的黑体
                     }
-                    text.setFont(Font.font(fontFamily, text.getFont().getSize()*1.5));
+                    text.setFont(Font.font(fontFamily, text.getFont().getSize() * 1.5));
                     break;
                 case "fontSize":
+                    System.out.println(text.getText() + "," + s);
                     try {
                         double sizeInMm = Double.parseDouble(kv[1].trim());
-                        double sizeInPoints = mmToPoints(sizeInMm)*1.5;
+                        double sizeInPoints = mmToPoints(sizeInMm) * 1.5;
                         text.setFont(Font.font(text.getFont().getFamily(), sizeInPoints));
                     } catch (NumberFormatException e) {
                         System.err.println("字体大小解析错误: " + e.getMessage());
@@ -353,24 +356,38 @@ public class PrintTest implements Printable {
                         text.setFont(Font.font(
                                 text.getFont().getFamily(),
                                 FontWeight.BOLD,
-                                text.getFont().getSize()*1.5
+                                text.getFont().getSize() * 1.5
                         ));
                     }
                     break;
                 case "align":
                     if ("center".equals(kv[1].trim())) {
-                        text.setTextAlignment(TextAlignment.CENTER);
+                      //  text.setTextAlignment(TextAlignment.CENTER);
                     }
                     break;
                 case "valign":
                     if ("center".equals(kv[1].trim())) {
-                        text.setTextAlignment(TextAlignment.CENTER);
+                      //  text.setTextAlignment(TextAlignment.CENTER);
                     }
+
                     break;
             }
         }
+        if (style.contains("fontFamily") && !style.contains("fontSize")) {
+            text.setFont(Font.font("SimHei", mmToPoints(10)));
+            text.setTextAlignment(TextAlignment.RIGHT);
+            // 获取Text的父节点（即parent）
+            Parent parentNode = text.getParent();
+            if (parentNode != null) {
+                // 在这里可以对父节点进行偏移量设置
+                parentNode.setTranslateX(15); // X轴偏移10像素
+                parentNode.setTranslateY(115);  // Y轴偏移5像素
+            }
+        }
+
     }
-    private  void processLineElement(Element line, Pane parent) {
+
+    private void processLineElement(Element line, Pane parent) {
         Line lineNode = new Line(
                 mmToPx(Double.parseDouble(line.getAttribute("startX"))),
                 mmToPx(Double.parseDouble(line.getAttribute("startY"))),
@@ -389,12 +406,13 @@ public class PrintTest implements Printable {
 
         parent.getChildren().add(lineNode);
     }
-    private  final Map<String, String> DATA = Map.of(
+
+    private final Map<String, String> DATA = Map.of(
             "qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
             "sn", "SN-2023-001"
     );
 
-    public  void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
+    public void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
         // 1. 创建 JavaFX 可写图像
         // 创建透明背景的图像
         WritableImage image = new WritableImage(width, height);
@@ -417,11 +435,12 @@ public class PrintTest implements Printable {
         bg.dispose();
     }
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
-  
+
     public static void main(String[] args) {
         Node node = new PrintTest().parseXmlToNode();
         saveNodeAsImage(node, "456.png");
     }
+
     // 必须有一个公共无参构造器
     public PrintTest() {
         // 初始化代码
