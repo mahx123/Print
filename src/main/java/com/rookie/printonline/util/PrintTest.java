@@ -83,7 +83,7 @@ public class PrintTest implements Printable {
 
             // 定义左右偏移量，3mm转换为像素
 
-            double offsetPx = -9;
+            double offsetPx = -2;
 
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
