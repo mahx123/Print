@@ -82,7 +82,9 @@ public class PrintTest implements Printable {
             g2.translate(pf.getImageableX(), pf.getImageableY());
             g2.scale(scale, scale);
           //  System.out.println("=============");
-            renderNodeToGraphics2D(node,g2,10000, 3000);
+            double actualWidth = node.getBoundsInParent().getWidth();
+            double actualHeight = node.getBoundsInParent().getHeight();
+            renderNodeToGraphics2D(node,g2,(int)actualWidth, (int)actualHeight);
             return PAGE_EXISTS;
         } catch (Exception e) {
 
