@@ -25,10 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
@@ -237,21 +234,22 @@ public class PrintTest implements Printable {
             parent.getChildren().add(textNode);
         }
     }
-    private  ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
-
+    private ImageView generateQrCodeImageView(String content, double widthMM, double heightMM) throws Exception {
         int sizePx_w = (int) mmToPx(widthMM);
         int sizePx_h = (int) mmToPx(heightMM);
 
-        // 创建编码参数并禁用边距
+        // 彻底消除二维码边距的设置
         Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.MARGIN, 0); // 关键：设置边距为0
+        hints.put(EncodeHintType.MARGIN, 0); // 设置边距为0
+      //  hints.put(EncodeHintType.QR_VERSION, 10); // 固定版本号避免自动调整
+       // hints.put(EncodeHintType.MARGIN, 0); // 关键：设置边距为0
 
         BitMatrix matrix = new MultiFormatWriter().encode(
                 content,
                 BarcodeFormat.QR_CODE,
                 sizePx_w,
                 sizePx_h,
-                hints); // 传入编码参数
+                hints);
 
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -378,20 +376,25 @@ public class PrintTest implements Printable {
 
     public  void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
         // 1. 创建 JavaFX 可写图像
+        // 创建透明背景的图像
         WritableImage image = new WritableImage(width, height);
-
-        // 2. 设置快照参数（可选）
         SnapshotParameters params = new SnapshotParameters();
-        params.setFill(javafx.scene.paint.Color.TRANSPARENT); // 透明背景
+        params.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
-        // 3. 捕获节点快照
+        // 执行快照
         image = node.snapshot(params, image);
 
-        // 4. 转换为 AWT BufferedImage
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        // 转换为精确尺寸的BufferedImage
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bg = bufferedImage.createGraphics();
+        bg.setComposite(AlphaComposite.Clear);
+        bg.fillRect(0, 0, width, height);
+        bg.setComposite(AlphaComposite.SrcOver);
+        SwingFXUtils.fromFXImage(image, bufferedImage);
 
-        // 5. 绘制到 Graphics2D 上下文
-        g2d.drawImage(bufferedImage, 0, 0, null);
+        // 直接绘制到目标Graphics2D
+        g2d.drawImage(bufferedImage, 0, 0, width, height, null);
+        bg.dispose();
     }
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
   
