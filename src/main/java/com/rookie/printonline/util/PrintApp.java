@@ -35,15 +35,15 @@ public class PrintApp extends Application {
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(new PrintTest(), pf);
-
+        job.setPrintable(new PrintTest(), pf);
         try {
             // 显示打印对话框
-            if (job.printDialog()) {
-                job.setPrintable(new PrintTest(), pf);
+
+
                 System.out.println("开始打印...");
                 job.print();
                 System.out.println("打印完成");
-            }
+
         } catch (Exception e) {
             System.err.println("打印失败: " + e.getMessage());
         } finally {
