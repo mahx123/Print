@@ -68,18 +68,18 @@ public class PrintTest implements Printable {
             List<String> barCodeList1 = this.barCodeList;
             System.out.println(JsonUtil.objectToJson(barCodeList1));
             List<Node> nodes=new ArrayList<>();
-            for (int i = 0; i < 15; i++) {
-                Node node = parseXmlToNode();
+            for (int i = 0; i < barCodeList1.size(); i++) {
+                Node node = parseXmlToNode(barCodeList1.get(i));
                 nodes.add(node);
             }
             saveCombinedImage(nodes);
-            Node node = parseXmlToNode();
+          //  Node node = parseXmlToNode();
             //    saveNodeAsImage(node, "456.png");
             // BufferedImage img = ImageIO.read(new File("456.png"));
 
             // 直接渲染到Graphics2D，不经过中间图片
-            double width = node.getBoundsInParent().getWidth();
-            double height = node.getBoundsInParent().getHeight();
+            double width = nodes.get(0).getBoundsInParent().getWidth();
+            double height = nodes.get(0).getBoundsInParent().getHeight();
             // 计算缩放比例
             double scale = Math.min(
                     pf.getImageableWidth() / width,
@@ -94,8 +94,7 @@ public class PrintTest implements Printable {
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
             g2.scale(scale, scale);
             //  System.out.println("=============");
-            double actualWidth = node.getBoundsInParent().getWidth();
-            double actualHeight = node.getBoundsInParent().getHeight();
+
           //  renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
 
 
@@ -208,7 +207,7 @@ public class PrintTest implements Printable {
             e.printStackTrace();
         }
     }
-    public Node parseXmlToNode() {
+    public Node parseXmlToNode(String barcode) {
         Pane labelPane = new Pane();
         try {
             // 1. 解析XML模板
@@ -229,7 +228,7 @@ public class PrintTest implements Printable {
             // 3. 处理布局元素和线条
             NodeList layouts = doc.getElementsByTagName("layout");
             for (int i = 0; i < layouts.getLength(); i++) {
-                processLayoutElement((Element) layouts.item(i), labelPane);
+                processLayoutElement((Element) layouts.item(i), labelPane,barcode);
             }
 
             NodeList lines = doc.getElementsByTagName("line");
@@ -251,7 +250,7 @@ public class PrintTest implements Printable {
         return mm / MM_TO_INCH * DPI;
     }
 
-    private void processLayoutElement(Element layout, Pane parent) throws Exception {
+    private void processLayoutElement(Element layout, Pane parent,String barcodeValue) throws Exception {
         double width = Double.parseDouble(layout.getAttribute("width"));
         double height = Double.parseDouble(layout.getAttribute("height"));
         double left = Double.parseDouble(layout.getAttribute("left"));
@@ -271,7 +270,7 @@ public class PrintTest implements Printable {
         if (barcodes.getLength() > 0) {
             Element barcode = (Element) barcodes.item(0);
             if ("qrcode".equals(barcode.getAttribute("type"))) {
-                String content = barcode.getTextContent().replace("<%=_data.qrcode%>", DATA.get("qrcode")).trim();
+                String content = barcode.getTextContent().replace("<%=_data.qrcode%>", barcodeValue).trim();
                 ImageView qrCode = generateQrCodeImageView(content, width, height);
                 //  qrCode.getParent() .setLayoutX(0);
                 //  qrCode.getParent().setLayoutY(0);
@@ -295,7 +294,7 @@ public class PrintTest implements Printable {
         if (texts.getLength() > 0) {
             Element text = (Element) texts.item(0);
             String content = text.getTextContent()
-                    .replace("<%=_data.qrcode%>", DATA.get("qrcode"))
+                    .replace("<%=_data.qrcode%>", barcodeValue)
                     .replace("<%=_data.sn%>", DATA.get("sn")).trim();
 
             Text textNode = new Text(content);
@@ -487,7 +486,7 @@ public class PrintTest implements Printable {
     }
 
     private final Map<String, String> DATA = Map.of(
-            "qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
+            //"qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
             "sn", "999"
     );
 
@@ -516,7 +515,7 @@ public class PrintTest implements Printable {
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
 
     public static void main(String[] args) {
-        Node node = new PrintTest(null).parseXmlToNode();
+        Node node = new PrintTest(null).parseXmlToNode("");
         saveNodeAsImage(node, "456.png");
     }
 
