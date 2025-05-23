@@ -30,9 +30,10 @@ public class PrintApp {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-
+        int ct=0;
         for (String barCode : barCodes) {
-            job.setPrintable(new PrintTest(barCode), pf);
+            ct++;
+            job.setPrintable(new PrintTest(barCode,ct), pf);
 
             try {
                 // 直接打印（跳过对话框）

@@ -264,7 +264,7 @@ public class PrintTest implements Printable {
             Element text = (Element) texts.item(0);
             String content = text.getTextContent()
                     .replace("<%=_data.qrcode%>", barcodeValue)
-                    .replace("<%=_data.sn%>", DATA.get("sn")).trim();
+                    .replace("<%=_data.sn%>", batchId.toString()).trim();
 
             Text textNode = new Text(content);
             double leftPx = mmToPx(Double.parseDouble(layout.getAttribute("left")));
@@ -417,6 +417,7 @@ public class PrintTest implements Printable {
         if (style.contains("fontFamily") && !style.contains("fontSize")) {
             text.setFont(Font.font("SimHei", mmToPoints(10)));
             text.setTextAlignment(TextAlignment.RIGHT);
+            text.setTranslateX(mmToPx(5));
 //            // 获取Text的父节点（即parent）
 //            Parent parentNode = text.getParent();
 //            if (parentNode != null) {
@@ -426,11 +427,11 @@ public class PrintTest implements Printable {
 //            }
         }
         // 在方法最后添加：
-        if(text.getText().equals(DATA.get("sn"))) {
+        //if(text.getText().equals(DATA.get("sn"))) {
             // 只对SN文本向右移动5mm
-            text.setTranslateX(mmToPx(5));
+         //   text.setTranslateX(mmToPx(5));
 
-        }
+        //}
 
     }
 
@@ -454,10 +455,7 @@ public class PrintTest implements Printable {
         parent.getChildren().add(lineNode);
     }
 
-    private final Map<String, String> DATA = Map.of(
-            //"qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
-            "sn", "999"
-    );
+
 
     public void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
         // 1. 创建 JavaFX 可写图像
@@ -484,15 +482,18 @@ public class PrintTest implements Printable {
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
 
     public static void main(String[] args) {
-        Node node = new PrintTest(null).parseXmlToNode("");
+        Node node = new PrintTest(null,1).parseXmlToNode("");
         saveNodeAsImage(node, "456.png");
     }
 
     private String barCode;
+
+    private  Integer batchId; //打印批次ID
     // 必须有一个公共无参构造器
-    public PrintTest(String barCode) {
+    public PrintTest(String barCode,Integer batchId) {
         // 初始化代码
         this.barCode=barCode.replaceAll("(.{4})", "$1\n");
+            this.batchId=batchId;
         ;
     }
 }

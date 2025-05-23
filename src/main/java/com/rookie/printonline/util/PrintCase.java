@@ -91,13 +91,13 @@ public class PrintCase implements Printable {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(""), pf);
+        job.setPrintable(new PrintTest("",1), pf);
 
         try {
             // 显示打印对话框
             if (job.printDialog()) {
                 // 重要：设置自定义纸张大小
-                job.setPrintable(new PrintTest(""), pf);
+                job.setPrintable(new PrintTest("",1), pf);
 
                 System.out.println("开始打印...");
                 job.print();
