@@ -21,8 +21,8 @@ public class PrintApp {
         Paper paper = new Paper();
         paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
         paper.setImageableArea(
-                mmToPoints(marginMM),
-                mmToPoints(marginMM),
+                mmToPoints(marginMM)-20,
+                mmToPoints(marginMM-20),
                 mmToPoints(widthMM - 2 * marginMM),
                 mmToPoints(heightMM - 2 * marginMM)
         );
