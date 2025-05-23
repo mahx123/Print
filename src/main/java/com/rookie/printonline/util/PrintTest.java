@@ -239,7 +239,7 @@ public class PrintTest implements Printable {
             textNode.setLayoutY(topPx);
             // 如果是多行文本（如"O\nC\nO\nC"），设置自动换行
             if (content.contains("\n")) {
-                textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
+                //textNode.setWrappingWidth(mmToPx(width)); // 限制宽度以触发换行
             }
 
             parent.getChildren().add(textNode);
@@ -362,19 +362,19 @@ public class PrintTest implements Printable {
                     break;
                 case "align":
                     if ("center".equals(kv[1].trim())) {
-                      //  text.setTextAlignment(TextAlignment.CENTER);
+                       text.setTextAlignment(TextAlignment.CENTER);
                     }
                     break;
                 case "valign":
                     if ("center".equals(kv[1].trim())) {
-                      //  text.setTextAlignment(TextAlignment.CENTER);
+                        text.setTextAlignment(TextAlignment.CENTER);
                     }
 
                     break;
             }
         }
         if (style.contains("fontFamily") && !style.contains("fontSize")) {
-         //   text.setFont(Font.font("SimHei", mmToPoints(10)));
+            text.setFont(Font.font("SimHei", mmToPoints(10)));
             text.setTextAlignment(TextAlignment.RIGHT);
 //            // 获取Text的父节点（即parent）
 //            Parent parentNode = text.getParent();
@@ -387,8 +387,8 @@ public class PrintTest implements Printable {
         // 在方法最后添加：
         if(text.getText().equals(DATA.get("sn"))) {
             // 只对SN文本向右移动5mm
-            text.setTranslateX(mmToPx(3));
-          //  text.setLayoutX(mmToPx(left));
+            text.setTranslateX(mmToPx(5));
+
         }
 
     }
@@ -415,7 +415,7 @@ public class PrintTest implements Printable {
 
     private final Map<String, String> DATA = Map.of(
             "qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
-            "sn", "SN-2023-001"
+            "sn", "11111"
     );
 
     public void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
