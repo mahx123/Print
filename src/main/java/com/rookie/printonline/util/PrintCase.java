@@ -71,7 +71,7 @@ public class PrintCase implements Printable {
     public static void main(String[] args) {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
-        double heightMM = 30;
+        double heightMM = 60;
         double marginMM = 2; // 2mm边距
         List<String> barcodeList = new ArrayList<>();
         // 创建页面格式
@@ -83,9 +83,9 @@ public class PrintCase implements Printable {
         paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
         paper.setImageableArea(
                 mmToPoints(marginMM),
-                mmToPoints(marginMM),
+                mmToPoints(marginMM)-40,
                 mmToPoints(widthMM - 2 * marginMM),
-                mmToPoints(heightMM - 2 * marginMM)
+                mmToPoints(heightMM - 2 * marginMM)+40
         );
         pf.setPaper(paper);
 

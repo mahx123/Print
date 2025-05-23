@@ -34,6 +34,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,12 @@ public class PrintTest implements Printable {
             //   g2.drawImage(img, 0, 0, null);
             List<String> barCodeList1 = this.barCodeList;
             System.out.println(JsonUtil.objectToJson(barCodeList1));
+            List<Node> nodes=new ArrayList<>();
+            for (int i = 0; i < 15; i++) {
+                Node node = parseXmlToNode();
+                nodes.add(node);
+            }
+            saveCombinedImage(nodes);
             Node node = parseXmlToNode();
             //    saveNodeAsImage(node, "456.png");
             // BufferedImage img = ImageIO.read(new File("456.png"));
@@ -80,8 +87,8 @@ public class PrintTest implements Printable {
             );
 
             // 定义左右偏移量，3mm转换为像素
-
             double offsetPx = -4;
+
 
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
@@ -89,8 +96,32 @@ public class PrintTest implements Printable {
             //  System.out.println("=============");
             double actualWidth = node.getBoundsInParent().getWidth();
             double actualHeight = node.getBoundsInParent().getHeight();
-            renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
-            return PAGE_EXISTS;
+          //  renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
+
+
+
+            try {
+                BufferedImage img = ImageIO.read(new File("combined_image.png"));
+
+                // 计算缩放比例
+                 scale = Math.min(
+                        pf.getImageableWidth() / img.getWidth(),
+                        pf.getImageableHeight() / img.getHeight()
+                );
+
+                // 应用变换
+                g2.translate(pf.getImageableX(), pf.getImageableY());
+                g2.scale(1, 1);
+
+                // 绘制图片
+                g2.drawImage(img, 0, 0, null);
+
+                return PAGE_EXISTS;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return NO_SUCH_PAGE;
+            }
+           // return PAGE_EXISTS;
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -138,7 +169,45 @@ public class PrintTest implements Printable {
 
 
     }
+    // 将多个节点拼接为长图
+    private void saveCombinedImage(List<javafx.scene.Node> nodeList) {
+        if (nodeList.isEmpty()) {
+            System.out.println("节点列表为空，无法拼接图片");
+            return;
+        }
 
+        // 计算长图的总高度和最大宽度
+        double totalHeight = 0;
+        double maxWidth = 0;
+
+        for (javafx.scene.Node node : nodeList) {
+            totalHeight += node.prefHeight(-1);
+            maxWidth = Math.max(maxWidth, node.prefWidth(-1));
+        }
+
+        // 创建一个足够大的画布
+        Pane canvas = new Pane();
+        canvas.setPrefSize(maxWidth, totalHeight);
+
+        // 将所有节点添加到画布上，并垂直排列
+        double currentY = 0;
+        for (javafx.scene.Node node : nodeList) {
+            node.relocate(0, currentY);
+            canvas.getChildren().add(node);
+            currentY += node.prefHeight(-1);
+        }
+
+        // 对画布进行截图
+        WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
+
+        try {
+            File output = new File("combined_image.png");
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
+            System.out.println("拼接长图已保存为: " + output.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public Node parseXmlToNode() {
         Pane labelPane = new Pane();
         try {
