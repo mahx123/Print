@@ -64,6 +64,9 @@ public class StartApplication extends Application {
                             case "update":
                                 response = "";
                                 break;
+                            case "print":
+
+                                break;
                             default:
                                 response = "{\"error\": \"Unknown action: " + action + "\"}";
                                 exchange.sendResponseHeaders(404, response.length());
