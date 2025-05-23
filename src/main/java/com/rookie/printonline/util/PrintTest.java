@@ -492,7 +492,8 @@ public class PrintTest implements Printable {
     // 必须有一个公共无参构造器
     public PrintTest(String barCode) {
         // 初始化代码
-        this.barCode=barCode;
+        this.barCode=barCode.replaceAll("(.{4})", "$1\n");
+        ;
     }
 }
 
