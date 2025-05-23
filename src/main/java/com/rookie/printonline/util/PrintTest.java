@@ -443,12 +443,12 @@ public class PrintTest implements Printable {
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
 
     public static void main(String[] args) {
-        Node node = new PrintTest().parseXmlToNode();
+        Node node = new PrintTest(null).parseXmlToNode();
         saveNodeAsImage(node, "456.png");
     }
 
     // 必须有一个公共无参构造器
-    public PrintTest() {
+    public PrintTest(java.util.List<String> barcodeList) {
         // 初始化代码
     }
 }

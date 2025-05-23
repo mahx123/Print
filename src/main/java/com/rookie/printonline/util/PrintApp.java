@@ -4,9 +4,10 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.util.List;
 
 public class PrintApp {
-    public static void printDirectly() {
+    public static void printDirectly(List<String> barCodes) {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
         double heightMM = 40;
@@ -29,7 +30,7 @@ public class PrintApp {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(), pf);
+        job.setPrintable(new PrintTest(barCodes), pf);
 
         try {
             // 直接打印（跳过对话框）

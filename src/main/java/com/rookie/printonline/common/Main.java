@@ -44,7 +44,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Main extends Application {
@@ -82,9 +84,10 @@ public class Main extends Application {
             // 4. 将节点添加到场景并显示
             Scene scene = new Scene(new Group(labelPane));
             primaryStage.setScene(scene);
+            List<String> barcodeList=new ArrayList<>();
             //primaryStage.show();
             //saveNodeAsImage(labelPane, "456.png");
-            Node node = new PrintTest().parseXmlToNode();
+            Node node = new PrintTest(barcodeList).parseXmlToNode();
             PrintTest.saveNodeAsImage(node,"456.png");
             // 5. 延迟打印以确保渲染完成
 //            PauseTransition delay = new PauseTransition(Duration.millis(400));

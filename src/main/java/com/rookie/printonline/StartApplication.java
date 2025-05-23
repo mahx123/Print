@@ -71,12 +71,11 @@ public class StartApplication extends Application {
                             case "print":
                                 // 解析请求参数（假设是JSON格式）
                                 String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                                Map<String, String> data = null;
-
+                                List<String> strings = JsonUtil.jsonToList(requestBody, String.class);
                                 // 异步调用打印功能
                                 CompletableFuture.runAsync(() -> {
                                     try {
-                                        printLabel(data);
+                                        printLabel(strings);
                                        // response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
                                     } catch (Exception e) {
                                        // response = "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
@@ -124,11 +123,11 @@ public class StartApplication extends Application {
         }
     }
     // 打印标签的方法
-    private void printLabel(Map<String, String> data) {
+    private void printLabel(List<String> barcodes) {
         Platform.runLater(() -> {
             try {
                 // 调用 PrintApp 的打印逻辑
-                PrintApp.printDirectly();
+                PrintApp.printDirectly(barcodes);
             } catch (Exception e) {
                 e.printStackTrace();
             }

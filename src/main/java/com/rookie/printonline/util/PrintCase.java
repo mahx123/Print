@@ -17,14 +17,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 public class PrintCase implements Printable {
     /**
      * @param Graphic指明打印的图形环境
-     * @param PageFormat指明打印页格式
-     *            （页面大小以点为计量单位，1点为1英才的1/72，1英寸为25.4毫米。A4纸大致为595×842点）
+     * @param PageFormat指明打印页格式 （页面大小以点为计量单位，1点为1英才的1/72，1英寸为25.4毫米。A4纸大致为595×842点）
      * @param pageIndex指明页号
      **/
     // private final static int POINTS_PER_INCH = 32;
@@ -61,16 +62,18 @@ public class PrintCase implements Printable {
         }
 
     }
+
     // 毫米转点(1英寸=25.4毫米, 1英寸=72点)
     private static double mmToPoints(double mm) {
         return mm / 25.4 * 72;
     }
+
     public static void main(String[] args) {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
         double heightMM = 30;
         double marginMM = 2; // 2mm边距
-
+        List<String> barcodeList = new ArrayList<>();
         // 创建页面格式
         PageFormat pf = new PageFormat();
         pf.setOrientation(PageFormat.PORTRAIT);
@@ -88,13 +91,13 @@ public class PrintCase implements Printable {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(), pf);
+        job.setPrintable(new PrintTest(barcodeList), pf);
 
         try {
             // 显示打印对话框
             if (job.printDialog()) {
                 // 重要：设置自定义纸张大小
-                job.setPrintable(new PrintTest(), pf);
+                job.setPrintable(new PrintTest(barcodeList), pf);
 
                 System.out.println("开始打印...");
                 job.print();
