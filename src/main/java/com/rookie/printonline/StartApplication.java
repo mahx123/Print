@@ -6,7 +6,9 @@ import com.rookie.printonline.common.JsonUtil;
 import com.rookie.printonline.enums.HttpStatus;
 import com.rookie.printonline.exe.PrintServe;
 import com.rookie.printonline.result.ApiResponse;
+import com.rookie.printonline.util.PrintApp;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -22,6 +24,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class StartApplication extends Application {
     private static final int PORT = 8080; // HTTP 服务端口
@@ -65,8 +69,23 @@ public class StartApplication extends Application {
                                 response = "";
                                 break;
                             case "print":
+                                // 解析请求参数（假设是JSON格式）
+                                String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                                Map<String, String> data = null;
 
+                                // 异步调用打印功能
+                                CompletableFuture.runAsync(() -> {
+                                    try {
+                                        printLabel(data);
+                                       // response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
+                                    } catch (Exception e) {
+                                       // response = "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
+                                    }
+                                });
+
+                                response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
                                 break;
+
                             default:
                                 response = "{\"error\": \"Unknown action: " + action + "\"}";
                                 exchange.sendResponseHeaders(404, response.length());
@@ -105,7 +124,18 @@ public class StartApplication extends Application {
             e.printStackTrace();
         }
     }
-
+    // 打印标签的方法
+    private void printLabel(Map<String, String> data) {
+        Platform.runLater(() -> {
+            try {
+                // 调用 PrintApp 的打印逻辑
+                PrintApp printApp = new PrintApp();
+                printApp.start(new Stage()); // 这里会触发打印
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
     public static void main(String[] args) {
         launch();
     }
