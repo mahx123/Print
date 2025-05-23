@@ -82,8 +82,7 @@ public class StartApplication extends Application {
                                        // response = "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
                                     }
                                 });
-
-                                response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
+                                response = JsonUtil.objectToJson(ApiResponse.success());
                                 break;
 
                             default:

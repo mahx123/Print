@@ -1,4 +1,7 @@
 package com.rookie.printonline.result;
+
+import java.util.Collections;
+
 /**
  *@Title: 返回体定义
  *@Package: com.rookie.printonline.result
@@ -21,6 +24,14 @@ public class ApiResponse <T>{
     // 构造方法
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(true, data);
+    }
+    public static <T> ApiResponse<T> success() {
+        return new ApiResponse<>(true);
+    }
+
+    public ApiResponse(boolean success) {
+        this.success = success;
+        this.data= (T) Collections.emptyList();
     }
 
     public static ApiResponse<?> error(int code, String message) {
