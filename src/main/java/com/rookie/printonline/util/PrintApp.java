@@ -1,21 +1,16 @@
 package com.rookie.printonline.util;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Stage;
-
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
-public class PrintApp extends Application {
-    @Override
-    public void start(Stage primaryStage) {
+public class PrintApp {
+    public static void printDirectly() {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
         double heightMM = 40;
-        double marginMM = 0; // 2mm边距
+        double marginMM = 0;
 
         // 创建页面格式
         PageFormat pf = new PageFormat();
@@ -23,7 +18,7 @@ public class PrintApp extends Application {
 
         // 设置纸张
         Paper paper = new Paper();
-        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM/3));
+        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM / 3));
         paper.setImageableArea(
                 mmToPoints(marginMM),
                 mmToPoints(marginMM),
@@ -35,27 +30,18 @@ public class PrintApp extends Application {
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(new PrintTest(), pf);
-        job.setPrintable(new PrintTest(), pf);
+
         try {
-            // 显示打印对话框
-
-
-                System.out.println("开始打印...");
-                job.print();
-                System.out.println("打印完成");
-
+            // 直接打印（跳过对话框）
+            System.out.println("开始打印...");
+            job.print();
+            System.out.println("打印完成");
         } catch (Exception e) {
             System.err.println("打印失败: " + e.getMessage());
-        } finally {
-            Platform.exit(); // 打印完成后退出应用
         }
     }
 
     private static double mmToPoints(double mm) {
         return mm / 25.4 * 72;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

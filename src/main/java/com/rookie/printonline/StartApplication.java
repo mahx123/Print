@@ -129,8 +129,7 @@ public class StartApplication extends Application {
         Platform.runLater(() -> {
             try {
                 // 调用 PrintApp 的打印逻辑
-                PrintApp printApp = new PrintApp();
-                printApp.start(new Stage()); // 这里会触发打印
+                PrintApp.printDirectly();
             } catch (Exception e) {
                 e.printStackTrace();
             }
