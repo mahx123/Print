@@ -73,7 +73,7 @@ public class PrintCase implements Printable {
         double widthMM = 100;
         double heightMM = 60;
         double marginMM = 2; // 2mm边距
-        List<String> barcodeList = new ArrayList<>();
+
         // 创建页面格式
         PageFormat pf = new PageFormat();
         pf.setOrientation(PageFormat.PORTRAIT);
@@ -91,13 +91,13 @@ public class PrintCase implements Printable {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(barcodeList), pf);
+        job.setPrintable(new PrintTest(""), pf);
 
         try {
             // 显示打印对话框
             if (job.printDialog()) {
                 // 重要：设置自定义纸张大小
-                job.setPrintable(new PrintTest(barcodeList), pf);
+                job.setPrintable(new PrintTest(""), pf);
 
                 System.out.println("开始打印...");
                 job.print();

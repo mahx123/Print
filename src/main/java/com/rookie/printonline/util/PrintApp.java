@@ -10,7 +10,7 @@ public class PrintApp {
     public static void printDirectly(List<String> barCodes) {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
-        double heightMM = 40*barCodes.size();
+        double heightMM = 32;
         double marginMM = 0;
 
         // 创建页面格式
@@ -19,7 +19,7 @@ public class PrintApp {
 
         // 设置纸张
         Paper paper = new Paper();
-        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM / 3));
+        paper.setSize(mmToPoints(widthMM), mmToPoints(heightMM));
         paper.setImageableArea(
                 mmToPoints(marginMM),
                 mmToPoints(marginMM),
@@ -30,16 +30,20 @@ public class PrintApp {
 
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new PrintTest(barCodes), pf);
 
-        try {
-            // 直接打印（跳过对话框）
-            System.out.println("开始打印...");
-            job.print();
-            System.out.println("打印完成");
-        } catch (Exception e) {
-            System.err.println("打印失败: " + e.getMessage());
+        for (String barCode : barCodes) {
+            job.setPrintable(new PrintTest(barCode), pf);
+
+            try {
+                // 直接打印（跳过对话框）
+                System.out.println("开始打印...");
+                job.print();
+                System.out.println("打印完成");
+            } catch (Exception e) {
+                System.err.println("打印失败: " + e.getMessage());
+            }
         }
+
     }
 
     private static double mmToPoints(double mm) {

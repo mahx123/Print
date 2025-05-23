@@ -65,21 +65,13 @@ public class PrintTest implements Printable {
 
             // 绘制图片
             //   g2.drawImage(img, 0, 0, null);
-            List<String> barCodeList1 = this.barCodeList;
-            System.out.println(JsonUtil.objectToJson(barCodeList1));
-            List<Node> nodes=new ArrayList<>();
-            for (int i = 0; i < barCodeList1.size(); i++) {
-                Node node = parseXmlToNode(barCodeList1.get(i));
-                nodes.add(node);
-            }
-            saveCombinedImage(nodes);
-          //  Node node = parseXmlToNode();
+            Node node = parseXmlToNode(this.barCode);
             //    saveNodeAsImage(node, "456.png");
             // BufferedImage img = ImageIO.read(new File("456.png"));
 
             // 直接渲染到Graphics2D，不经过中间图片
-            double width = nodes.get(0).getBoundsInParent().getWidth();
-            double height = nodes.get(0).getBoundsInParent().getHeight();
+            double width = node.getBoundsInParent().getWidth();
+            double height = node.getBoundsInParent().getHeight();
             // 计算缩放比例
             double scale = Math.min(
                     pf.getImageableWidth() / width,
@@ -87,40 +79,17 @@ public class PrintTest implements Printable {
             );
 
             // 定义左右偏移量，3mm转换为像素
-            double offsetPx = -4;
 
+            double offsetPx = -4;
 
             // 应用变换，调整x坐标进行偏移
             g2.translate(pf.getImageableX() + offsetPx, pf.getImageableY());
             g2.scale(scale, scale);
             //  System.out.println("=============");
-
-          //  renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
-
-
-
-            try {
-                BufferedImage img = ImageIO.read(new File("combined_image.png"));
-
-                // 计算缩放比例
-                 scale = Math.min(
-                        pf.getImageableWidth() / img.getWidth(),
-                        pf.getImageableHeight() / img.getHeight()
-                );
-
-                // 应用变换
-                g2.translate(pf.getImageableX(), pf.getImageableY());
-                g2.scale(1, 1);
-
-                // 绘制图片
-                g2.drawImage(img, 0, 0, null);
-
-                return PAGE_EXISTS;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return NO_SUCH_PAGE;
-            }
-           // return PAGE_EXISTS;
+            double actualWidth = node.getBoundsInParent().getWidth();
+            double actualHeight = node.getBoundsInParent().getHeight();
+            renderNodeToGraphics2D(node, g2, (int) actualWidth, (int) actualHeight);
+            return PAGE_EXISTS;
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -519,11 +488,11 @@ public class PrintTest implements Printable {
         saveNodeAsImage(node, "456.png");
     }
 
-    private java.util.List<String> barCodeList;
+    private String barCode;
     // 必须有一个公共无参构造器
-    public PrintTest(java.util.List<String> barcodeList) {
+    public PrintTest(String barCode) {
         // 初始化代码
-        this.barCodeList=barcodeList;
+        this.barCode=barCode;
     }
 }
 

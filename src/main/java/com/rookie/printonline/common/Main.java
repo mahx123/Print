@@ -87,7 +87,7 @@ public class Main extends Application {
             List<String> barcodeList=new ArrayList<>();
             //primaryStage.show();
             //saveNodeAsImage(labelPane, "456.png");
-            Node node = new PrintTest(barcodeList).parseXmlToNode("12234");
+            Node node = new PrintTest("").parseXmlToNode("12234");
             PrintTest.saveNodeAsImage(node,"456.png");
             // 5. 延迟打印以确保渲染完成
 //            PauseTransition delay = new PauseTransition(Duration.millis(400));
