@@ -10,40 +10,59 @@ package com.rookie.printonline.result;
  *@Copyright: 菜鸟
  */
 public class ApiResponse <T>{
-    private int code;     // HTTP状态码或业务状态码
-    private String message;
+    private boolean success;     // HTTP状态码或业务状态码
+
+    private int errorCode; //返回失败的代码
+
+    private String errorMsg;//返回的错误信息
+
     private T data;       // 实际数据（对象/数组）
 
     // 构造方法
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(200, "Success", data);
+        return new ApiResponse<>(true, data);
     }
 
     public static ApiResponse<?> error(int code, String message) {
-        return new ApiResponse<>(code, message, null);
+        return new ApiResponse<>(false, code, message);
     }
 
-    public ApiResponse(int code, String message, T data) {
-        this.code = code;
-        this.message = message;
+    public ApiResponse(boolean success, T data) {
+        this.success = success;
         this.data = data;
     }
 
-    public int getCode() {
-        return code;
+    public ApiResponse(boolean success, int errorCode, String errorMsg) {
+        this.success = success;
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public String getMessage() {
-        return message;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public int getErrorCode() {
+        return errorCode;
     }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+
 
     public T getData() {
         return data;
