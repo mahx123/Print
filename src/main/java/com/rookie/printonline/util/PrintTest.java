@@ -415,7 +415,7 @@ public class PrintTest implements Printable {
 
     private final Map<String, String> DATA = Map.of(
             "qrcode", "0000\n2320\n0025\n6448\n9759\n0010",
-            "sn", "11111"
+            "sn", "999"
     );
 
     public void renderNodeToGraphics2D(Node node, Graphics2D g2d, int width, int height) {
