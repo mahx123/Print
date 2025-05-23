@@ -5,6 +5,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.rookie.printonline.common.JsonUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -34,6 +35,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -62,6 +64,8 @@ public class PrintTest implements Printable {
 
             // 绘制图片
             //   g2.drawImage(img, 0, 0, null);
+            List<String> barCodeList1 = this.barCodeList;
+            System.out.println(JsonUtil.objectToJson(barCodeList1));
             Node node = parseXmlToNode();
             //    saveNodeAsImage(node, "456.png");
             // BufferedImage img = ImageIO.read(new File("456.png"));
@@ -341,7 +345,7 @@ public class PrintTest implements Printable {
                     text.setFont(Font.font(fontFamily, text.getFont().getSize() * 1.5));
                     break;
                 case "fontSize":
-                    System.out.println(text.getText() + "," + s);
+                   // System.out.println(text.getText() + "," + s);
                     try {
                         double sizeInMm = Double.parseDouble(kv[1].trim());
                         double sizeInPoints = mmToPoints(sizeInMm) * 1.5;
@@ -447,9 +451,11 @@ public class PrintTest implements Printable {
         saveNodeAsImage(node, "456.png");
     }
 
+    private java.util.List<String> barCodeList;
     // 必须有一个公共无参构造器
     public PrintTest(java.util.List<String> barcodeList) {
         // 初始化代码
+        this.barCodeList=barcodeList;
     }
 }
 
