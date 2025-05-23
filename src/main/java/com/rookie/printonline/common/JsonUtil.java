@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  *@Title: Json处理类
  *@Package: com.rookie.printonline.common
@@ -73,6 +76,21 @@ public class JsonUtil {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    /**
+     * 将json数据转换成Map对象
+     *
+     * @param jsonData json数据
+     * @return
+     */
+    public static Map<String, Object> jsonToMap(String jsonData) {
+        try {
+            return MAPPER.readValue(jsonData, HashMap.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.rookie.printonline.util;
 
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
@@ -7,7 +9,7 @@ import java.awt.print.PrinterJob;
 import java.util.List;
 
 public class PrintApp {
-    public static void printDirectly(List<String> barCodes) {
+    public static void printDirectly(List<String> barCodes,String printerName)throws RuntimeException {
         // 设置自定义纸张大小(100mm x 30mm)
         double widthMM = 100;
         double heightMM = 32;
@@ -28,8 +30,27 @@ public class PrintApp {
         );
         pf.setPaper(paper);
 
+
         // 创建打印作业
         PrinterJob job = PrinterJob.getPrinterJob();
+        // 创建打印作业
+        // 获取指定打印机
+
+
+        if(!printerName.contains("默认")){
+            PrintService printService = getPrintServiceByName(printerName);
+            if (printService == null) {
+                System.err.println("未找到指定的打印机: " + printerName);
+                throw new RuntimeException("未找到指定的打印机: " + printerName);
+                //  return;
+            }
+            try {
+                job.setPrintService(printService);
+            } catch (PrinterException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         int ct=0;
         for (String barCode : barCodes) {
             ct++;
@@ -46,7 +67,15 @@ public class PrintApp {
         }
 
     }
-
+    private static PrintService getPrintServiceByName(String printerName) {
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printService : printServices) {
+            if (printService.getName().equals(printerName)) {
+                return printService;
+            }
+        }
+        return null;
+    }
     private static double mmToPoints(double mm) {
         return mm / 25.4 * 72;
     }

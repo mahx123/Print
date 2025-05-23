@@ -3,10 +3,12 @@ package com.rookie.printonline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rookie.printonline.common.HttpUtils;
 import com.rookie.printonline.common.JsonUtil;
+import com.rookie.printonline.dto.PrintDto;
 import com.rookie.printonline.enums.HttpStatus;
 import com.rookie.printonline.exe.PrintServe;
 import com.rookie.printonline.result.ApiResponse;
 import com.rookie.printonline.util.PrintApp;
+import freemarker.template.utility.CollectionUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -71,17 +73,22 @@ public class StartApplication extends Application {
                             case "print":
                                 // 解析请求参数（假设是JSON格式）
                                 String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                                List<String> strings = JsonUtil.jsonToList(requestBody, String.class);
-                                // 异步调用打印功能
-                                CompletableFuture.runAsync(() -> {
-                                    try {
-                                        printLabel(strings);
-                                       // response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
-                                    } catch (Exception e) {
-                                       // response = "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
-                                    }
-                                });
-                                response = JsonUtil.objectToJson(ApiResponse.success());
+                                PrintDto printDto = JsonUtil.jsonToPojo(requestBody, PrintDto.class);
+                                assert printDto != null;
+                                if(printDto.getBarCodeList()!=null&& !printDto.getBarCodeList().isEmpty()){
+                                    // 异步调用打印功能
+                                    CompletableFuture.runAsync(() -> {
+                                        try {
+                                            printLabel(printDto.getBarCodeList(),printDto.getPrinterName());
+                                            // response = "{\"status\": \"success\", \"message\": \"Print job started\"}";
+                                        } catch (RuntimeException e) {
+                                            // response = "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
+                                           JsonUtil.objectToJson(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.getCode(), e.getMessage()));
+                                        }
+                                    });
+                                    response = JsonUtil.objectToJson(ApiResponse.success());
+                                }
+
                                 break;
 
                             default:
@@ -96,7 +103,7 @@ public class StartApplication extends Application {
 
                         exchange.sendResponseHeaders(HttpStatus.OK.getCode(), response.getBytes().length);
                         os.write(response.getBytes());
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         os = exchange.getResponseBody();
                         ApiResponse<?> error = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.getCode(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
                         String errorJson = JsonUtil.objectToJson(error);
@@ -123,13 +130,14 @@ public class StartApplication extends Application {
         }
     }
     // 打印标签的方法
-    private void printLabel(List<String> barcodes) {
+    private void printLabel(List<String> barcodes,String printerName)throws RuntimeException {
         Platform.runLater(() -> {
             try {
                 // 调用 PrintApp 的打印逻辑
-                PrintApp.printDirectly(barcodes);
-            } catch (Exception e) {
-                e.printStackTrace();
+                PrintApp.printDirectly(barcodes,printerName);
+            } catch (RuntimeException e) {
+
+                    throw e;
             }
         });
     }

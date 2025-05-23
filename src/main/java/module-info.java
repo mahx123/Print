@@ -20,6 +20,7 @@ module com.rookie.printonline {
     exports com.rookie.printonline.util;
     requires usb4java;
     requires serialcom;
+    exports com.rookie.printonline.dto to com.fasterxml.jackson.databind;
     opens com.rookie.printonline.result to com.fasterxml.jackson.databind;
     exports com.rookie.printonline.zpl;
 
